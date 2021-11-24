@@ -1,0 +1,83 @@
+{
+  "feature_type": "junction_quantification",
+  "observation_type": "read_counts",
+  "subjects": [
+    {
+      "subject_id": "SA507408",
+      "features": [
+        {
+          "feature_id": "1:114472155-114483003",
+          "value": 0
+        },
+        {
+          "feature_id": "1:114472562-114483003",
+          "value": 1
+        },
+        {
+          "feature_id": "1:114484082-114495387",
+          "value": 8
+        },
+        {
+          "feature_id": "1:114495512-114497272",
+          "value": 1
+        },
+        {
+          "feature_id": "1:114497393-114498184",
+          "value": 2
+        },
+        {
+          "feature_id": "1:114498272-114499248",
+          "value": 5
+        },
+        {
+          "feature_id": "1:114499434-114499745",
+          "value": 3
+        },
+        {
+          "feature_id": "1:114499807-114500687",
+          "value": 0
+        },
+        {
+          "feature_id": "1:114499909-114500687",
+          "value": 4
+        },
+        {
+          "feature_id": "1:114500914-114504938",
+          "value": 2
+        },
+        {
+          "feature_id": "1:114505061-114508751",
+          "value": 0
+        },
+        {
+          "feature_id": "1:114505061-114506008",
+          "value": 2
+        },
+        {
+          "feature_id": "1:114506144-114508751",
+          "value": 0
+        },
+        {
+          "feature_id": "1:114508895-114510387",
+          "value": 4
+        },
+        {
+          "feature_id": "1:114510571-114511063",
+          "value": 1
+        },
+        {
+          "feature_id": "1:114511271-114512577",
+          "value": 3
+        },
+        {
+          "feature_id": "1:114512820-114514445",
+          "value": 5
+        },
+        {
+          "feature_id": "1:114514577-114515645",
+          "value": 4
+        }
+      ]
+    }
+  ]
+}
