@@ -8,8 +8,11 @@ import { observer } from "mobx-react-lite";
 import { localPoint } from '@visx/event';
 
 
-const cool1 = '#122549';
-const cool2 = '#b4fbde';
+const colors = {
+    greens: ['#10451d', '#b7efc5'],
+    reds: ['#6e1423', '#e01e37'],
+    blues: ['#013a63', '#a9d6e5']
+}
 export const background = '#28272c';
 export const accentColorDark = '#75daad';
 
@@ -56,7 +59,7 @@ const HeatmapV = ({model}) => {
         domain: [0, bucketSizeMax],
     });
     const rectColorScale = scaleLinear({
-        range: [cool1, cool2],
+        range: colors[model.colors],
         domain: [0, colorMax],
     });
     const opacityScale = scaleLinear({
