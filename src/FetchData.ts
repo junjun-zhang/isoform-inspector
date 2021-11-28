@@ -108,6 +108,7 @@ export interface HMDataEntry {
     visxData: BinDataEntry[];
 }
 
+//@ts-ignore
 export function getNivoHmData(dataState: string, subjectType: string, subjects: Array<Subject>) {
     if (dataState === 'done') {
         const { subject, features, data } = getHeatmapData(subjectType, subjects);
@@ -115,6 +116,7 @@ export function getNivoHmData(dataState: string, subjectType: string, subjects: 
     }
 }
 
+//@ts-ignore
 export function getVisxHmData(dataState: string, subjectType: string, subjects: Array<Subject>) {
     if (dataState === 'done') {
         const { visxData } = getHeatmapData(subjectType, subjects);
@@ -184,7 +186,7 @@ function getHeatmapData(subjectType: string, subjects: Array<Subject>) {
                     }]
                 })
             } else {
-                visxData[j].bins.unshift({
+                visxData[j].bins.push({
                     bin: subjects.length - i - 1,
                     count: feature.value
                 })

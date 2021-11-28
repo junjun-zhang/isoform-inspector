@@ -17,8 +17,7 @@ const HeatmapV = ({model}) => {
     const width = model.width;
     const height = model.height;
     // const events = false;
-    const margin = { top: 10, left: 20, right: 20, bottom: 40 };
-    const separation = 20;
+    const margin = { top: 20, left: 20, right: 20, bottom: 20 };
 
     const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
         useTooltip();
@@ -76,7 +75,7 @@ const HeatmapV = ({model}) => {
 
     // bounds
     const size =
-        width > margin.left + margin.right ? width - margin.left - margin.right - separation : width;
+        width > margin.left + margin.right ? width - margin.left - margin.right : width;
     const xMax = size;
     const yMax = height - margin.bottom - margin.top;
 
@@ -87,12 +86,12 @@ const HeatmapV = ({model}) => {
     const binHeight = yMax / bucketSizeMax;
 
     xScale.range([0, xMax]);
-    yScale.range([yMax, 0]);
+    yScale.range([0, yMax]);
 
     return width < 10 ? null : (
         <div style={{ position: 'relative' }}>
             <svg ref={containerRef} width={width} height={height}>
-                <rect x={0} y={0} width={width} height={height} rx={14} fill={background} />
+                <rect x={0} y={0} width={width} height={height} fill={background} />
                 <Group top={margin.top} left={margin.left}>
                     <HeatmapRect
                         data={binData}
@@ -131,11 +130,10 @@ const HeatmapV = ({model}) => {
                                             // localPoint returns coordinates relative to the nearest SVG, which
                                             // is what containerRef is set to in this example.
                                             const eventSvgCoords = localPoint(event);
-                                            const left = bin.x + bin.width * 2.5;
                                             showTooltip({
                                                 tooltipData: bin,
                                                 tooltipTop: eventSvgCoords?.y,
-                                                tooltipLeft: left,
+                                                tooltipLeft: eventSvgCoords?.x,
                                             });
                                         }}
                                     />
@@ -169,7 +167,7 @@ const HeatmapV = ({model}) => {
                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
                     <div>Row: {tooltipData.row}</div>
                     <div>Column: {tooltipData.column}</div>
-                    <div>Value: {tooltipData.bin.count}</div>
+                    <div>Value: {tooltipData.count}</div>
                 </TooltipInPortal>
             )}
         </div>
