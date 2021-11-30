@@ -1,39 +1,60 @@
-import { types, Instance, flow } from 'mobx-state-tree';
 import { createContext, useContext } from "react";
-import { fetchLocalData, getNivoHmData, getVisxHmData } from './FetchData';
+import { types, Instance, flow } from 'mobx-state-tree';
+import Subject from './subject';
+import Feature from './feature';
+import { ObservationModel } from './observation';
+import { fetchUrlData } from '../dataAdapters/adapterWebAPI'
+import { getNivoData, getVisxData } from '../dataAdapters/utils'
+import { subjectIds, subjectType } from '../dataAdapters/utils'
+
 
 export default function IsoformInspector() {
     return types
         .model('IsoformInspector', {
             type: types.literal('IsoformInspector'),
-            displayName: types.maybe(types.string),
-            geneId: types.string,
+            displayName: types.string,
             colors: "greens",
             width: 800,
             height: 500,
-            keys: types.array(types.string),
+
+            geneId: types.string,
+
+            subjectType: types.string,
+            subjectIds: types.array(types.string),
+            subjects: types.array(Subject()),
+            subjectOrderBy: types.maybe(types.string),
+
+            featureType: types.enumeration(['junction', 'exon', 'transcript']),
+            featureIds: types.array(types.string),
+            features: types.array(Feature()),
+
             dataState: types.string,
-            error: types.frozen()
         })
         .volatile(() => ({
-            data: (undefined as unknown) as any,
-            nivoData: (undefined as unknown) as any,
-            visxData: (undefined as unknown) as any,
+            data: (undefined as unknown) as ObservationModel,
+            error: types.frozen()
         }))
         .actions(self => ({
             setDisplayName(displayName: string) {
                 self.displayName = displayName;
             },
-            setGeneId: flow(function*(geneId) {
+            setGeneId: flow(function* (geneId) {
                 self.dataState = 'pending';
                 try {
-                    const localData = yield fetchLocalData(geneId);
-                    self.data = localData;
-                    self.dataState = 'done';
-                    self.nivoData = getNivoHmData(self.dataState, self.data.subjectType, self.data.subjects);
-                    self.visxData = getVisxHmData(self.dataState, self.data.subjectType, self.data.subjects);
+                    const fetchedData = yield fetchUrlData(
+                        geneId, 'junction', self.subjectType, self.subjectIds)
+                    //@ts-ignore
+                    self.subjects = fetchedData.subjects;
+                    //@ts-ignore
+                    self.featureIds = fetchedData.featureIds;
+                    //@ts-ignore
+                    self.features = fetchedData.features;
+                    //@ts-ignore
+                    self.data = fetchedData.data;
+
                     self.geneId = geneId;
-                } catch (error) {
+                    self.dataState = 'done';
+                } catch (error: any) {
                     self.error = error;
                 }
             }),
@@ -43,12 +64,12 @@ export default function IsoformInspector() {
         }))
         .views(self => ({
             //@ts-ignore
-            heatmapData(chartLib: string) {
-                if (chartLib === 'nivo') {
-                    return getNivoHmData(self.dataState, self.data.subjectType, self.data.subjects);
-                } else if (chartLib === 'visx') {
-                    return getVisxHmData(self.dataState, self.data.subjectType, self.data.subjects);
-                }
+            nivoData() {
+                return getNivoData(self.subjectType, self.data);
+            },
+            //@ts-ignore
+            visxData() {
+                return getVisxData(self.data);
             },
         }))
 }
@@ -66,9 +87,10 @@ export function initializeStore() {
         colors: "greens",
         width: 800,
         height: 500,
-        keys: [],
+        featureType: 'junction',
+        subjectType: subjectType,
+        subjectIds: subjectIds,
         dataState: 'noData',
-        error: undefined
     });
     return _store;
 }

@@ -36,7 +36,7 @@ const HeatmapV = ({model}) => {
         return null
     }
 
-    const binData = model.heatmapData('visx');
+    const binData = model.visxData();
 
     if (binData.length === 0) return null;
 

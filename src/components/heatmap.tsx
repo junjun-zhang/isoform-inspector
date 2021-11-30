@@ -12,13 +12,11 @@ export const Heatmap = ({ model }: { model: any }) => {
         return null
     }
 
-    const { subject, features, data } = model.heatmapData('nivo');
-
     return (
         <HeatMapCanvas
-            indexBy={subject}
-            keys={features}
-            data={data}
+            indexBy={model.subjectType}
+            keys={model.featureIds}
+            data={model.nivoData()}
             width={model.width}
             height={model.height}
             colors={model.colors}
