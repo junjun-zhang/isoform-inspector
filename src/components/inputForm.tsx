@@ -23,9 +23,11 @@ export const InputForm = ({ model }: { model: any}) => {
             </select>&nbsp;&nbsp;
             <button onClick={() => {
                 if (geneId !== model.geneId) {
-                    model.setGeneId(geneId);
+                    model.setGeneId(geneId, 'junction');
                 }
-                model.setColors(colors);
+                if (colors !== model.colors) {
+                    model.setColors(colors);
+                }
             }}>OK</button>
         </div>
     );

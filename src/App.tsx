@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import IsoformInspectorWrapper from './IsoformInspector'
-import { initializeStore, Provider } from './model'
+import { initializeStore, Provider } from './models/IsoformInspector'
 const store = initializeStore();
 
 

@@ -3,7 +3,8 @@ import { InputForm } from "./components/inputForm";
 import Heatmap from "./components/heatmap";
 import HeatmapV from './components/heatmapVisx'
 import { observer } from "mobx-react-lite";
-import { useStore } from "./model";
+import { useStore } from "./models/IsoformInspector"
+
 
 const IsoformInspector = observer(({model}: {model: any}) => {
     return (
