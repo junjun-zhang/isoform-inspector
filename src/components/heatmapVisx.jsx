@@ -9,11 +9,14 @@ import { localPoint } from '@visx/event';
 
 
 const colors = {
-    greens: ['#10451d', '#b7efc5'],
-    reds: ['#6e1423', '#e01e37'],
-    blues: ['#013a63', '#a9d6e5']
+    // greens: ['#10451d', '#b7efc5'],
+    // reds: ['#6e1423', '#e01e37'],
+    // blues: ['#013a63', '#a9d6e5'],
+    greens: ['#b7efc5', '#10451d'],
+    reds: ['#e01e37', '#6e1423'],
+    blues: ['#a9d6e5', '#013a63'],
 }
-export const background = '#28272c';
+export const background = '#ffffff'; // '#28272c';
 export const accentColorDark = '#75daad';
 
 const HeatmapV = ({model}) => {
@@ -21,6 +24,7 @@ const HeatmapV = ({model}) => {
     const height = model.height;
     // const events = false;
     const margin = { top: 20, left: 20, right: 20, bottom: 20 };
+    const separation = 5
 
     const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
         useTooltip();
@@ -94,15 +98,14 @@ const HeatmapV = ({model}) => {
     return width < 10 ? null : (
         <div style={{ position: 'relative' }}>
             <svg ref={containerRef} width={width} height={height}>
-                <rect x={0} y={0} width={width} height={height} fill={background} />
                 <Group top={margin.top} left={margin.left}>
                     <HeatmapRect
                         data={binData}
-                        xScale={(d) => xScale(d) ?? 0}
+                        xScale={(d) => xScale(d) * 0.2 ?? 0}
                         yScale={(d) => yScale(d) ?? 0}
                         colorScale={rectColorScale}
                         opacityScale={opacityScale}
-                        binWidth={binWidth}
+                        binWidth={binWidth * 0.2}
                         binHeight={binHeight}
                         gap={0}
                     >
@@ -110,7 +113,57 @@ const HeatmapV = ({model}) => {
                             heatmap.map((heatmapBins) =>
                                 heatmapBins.map((bin) => (
                                     <rect
-                                        key={`heatmap-rect-${bin.row}-${bin.column}`}
+                                        key={`heatmap-anno-${bin.row}-${bin.column}`}
+                                        className="visx-heatmap-rect"
+                                        width={bin.width}
+                                        height={bin.height}
+                                        x={bin.x}
+                                        y={bin.y}
+                                        fill={bin.color}
+                                        fillOpacity={bin.opacity}
+                                        onClick={() => {
+                                            const { row, column } = bin;
+                                            alert(JSON.stringify({ row, column, bin: bin.bin }));
+                                        }}
+                                        onMouseLeave={() => {
+                                            tooltipTimeout = window.setTimeout(() => {
+                                                hideTooltip();
+                                            }, 300);
+                                        }}
+                                        onMouseMove={(event) => {
+                                            if (tooltipTimeout) clearTimeout(tooltipTimeout);
+                                            // TooltipInPortal expects coordinates to be relative to containerRef
+                                            // localPoint returns coordinates relative to the nearest SVG, which
+                                            // is what containerRef is set to in this example.
+                                            const eventSvgCoords = localPoint(event);
+                                            showTooltip({
+                                                tooltipData: bin,
+                                                tooltipTop: eventSvgCoords?.y,
+                                                tooltipLeft: eventSvgCoords?.x,
+                                            });
+                                        }}
+                                    />
+                                )),
+                            )
+                        }
+                    </HeatmapRect>
+                </Group>
+                <Group top={margin.top} left={margin.left + width * 0.2 + separation}>
+                    <HeatmapRect
+                        data={binData}
+                        xScale={(d) => xScale(d) * 0.8 ?? 0}
+                        yScale={(d) => yScale(d) ?? 0}
+                        colorScale={rectColorScale}
+                        opacityScale={opacityScale}
+                        binWidth={binWidth * 0.8}
+                        binHeight={binHeight}
+                        gap={0}
+                    >
+                        {(heatmap) =>
+                            heatmap.map((heatmapBins) =>
+                                heatmapBins.map((bin) => (
+                                    <rect
+                                        key={`heatmap-count-${bin.row}-${bin.column}`}
                                         className="visx-heatmap-rect"
                                         width={bin.width}
                                         height={bin.height}
@@ -157,7 +210,7 @@ const HeatmapV = ({model}) => {
                         />
                         <Line
                             from={{ x: margin.left, y: tooltipTop }}
-                            to={{ x: innerWidth + margin.left, y: tooltipTop }}
+                            to={{ x: innerWidth + separation + margin.left, y: tooltipTop }}
                             stroke={accentColorDark}
                             strokeWidth={2}
                             pointerEvents="none"
@@ -168,8 +221,8 @@ const HeatmapV = ({model}) => {
             </svg>
             {tooltipOpen && tooltipData && (
                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-                    <div>Row: {tooltipData.row}</div>
-                    <div>Column: {tooltipData.column}</div>
+                    <div>Sample: {model.subjectIds[tooltipData.row]}, row: {tooltipData.row}</div>
+                    <div>Junction: {model.featureIds[tooltipData.column]}, column: {tooltipData.column}</div>
                     <div>Value: {tooltipData.count}</div>
                 </TooltipInPortal>
             )}

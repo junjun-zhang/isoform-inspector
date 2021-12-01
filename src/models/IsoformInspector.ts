@@ -14,19 +14,28 @@ export default function IsoformInspector() {
             type: types.literal('IsoformInspector'),
             displayName: types.string,
             colors: "greens",
-            width: 800,
-            height: 500,
+            width: 1200,
+            height: 400,
 
             geneId: types.string,
+
+            currentSubjectId: types.maybe(types.string),
+            currentFeatureId: types.maybe(types.string),
 
             subjectType: types.string,
             subjectIds: types.array(types.string),
             subjects: types.array(Subject()),
             subjectOrderBy: types.maybe(types.string),
 
+            subjectAnnoFields: types.array(types.string),
+            subjectAnnotations: types.array(types.string),
+
             featureType: types.enumeration(['junction', 'exon', 'transcript']),
             featureIds: types.array(types.string),
             features: types.array(Feature()),
+
+            featureAnnoFields: types.array(types.string),
+            featureAnnotations: types.array(types.string),
 
             dataState: types.string,
         })
@@ -37,6 +46,12 @@ export default function IsoformInspector() {
         .actions(self => ({
             setDisplayName(displayName: string) {
                 self.displayName = displayName;
+            },
+            setCurrentSubjectId(subjectId: string | undefined) {
+                self.currentSubjectId = subjectId
+            },
+            setCurrentFeatureId(featureId: string | undefined) {
+                self.currentFeatureId = featureId
             },
             setGeneId: flow(function* (geneId) {
                 self.dataState = 'pending';
@@ -71,6 +86,12 @@ export default function IsoformInspector() {
             visxData() {
                 return getVisxData(self.data);
             },
+            subjAnnoWidth() {
+                return self.width * 0.2
+            },
+            heatmapWidth() {
+                return self.width * 0.8
+            }
         }))
 }
 
@@ -85,8 +106,8 @@ export function initializeStore() {
         displayName: 'Transcript Isoform Inspector',
         geneId: '',
         colors: "greens",
-        width: 800,
-        height: 500,
+        width: 1200,
+        height: 400,
         featureType: 'junction',
         subjectType: subjectType,
         subjectIds: subjectIds,
