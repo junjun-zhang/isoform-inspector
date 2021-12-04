@@ -30,7 +30,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                     <Heatmap model={model} />
                 </Grid>
                 <Grid item xs={3}>
-                    <SubjectAnnotation model={model} />
+                    {/* <SubjectAnnotation model={model} /> */}
                 </Grid>
                 <Grid item xs={9}>
                     <HeatmapN model={model} />

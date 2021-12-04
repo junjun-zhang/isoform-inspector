@@ -1,6 +1,5 @@
 import { ObservationModel } from '../models/observation';
 
-
 export const subjectType = 'sample';
 
 export const subjectIds = [
@@ -84,9 +83,9 @@ export const subjectIds = [
 ]
 
 export function getNivoData(subjectType: string, data: ObservationModel) {
-    var nivoData: any[] = [];
+    let nivoData: any[] = [];
     data.subjects.forEach((subj, i) => {
-        var count_info: { [key: string]: any } = {};
+        let count_info: { [key: string]: any } = {};
         count_info[subjectType] = subj.subjectId;
 
         subj.features.forEach((feature: any, j: number) => {
@@ -122,4 +121,24 @@ export function getVisxData(data: ObservationModel) {
     })
 
     return visxData
+}
+
+export function getSubjAnnoData(
+    subjectType: string,
+    subjectIds: string[],
+    subjects: { [key: string]: any } | undefined,
+) {
+    if (subjects === undefined) return;
+
+    let annoData: any[] = [];
+    for (const subjectId of subjectIds) {
+        let anno: { [key: string]: any } = {};
+        anno[subjectType] = subjectId;
+
+        for (const field in subjects[subjectId].annotations) {
+            anno[field] = subjects[subjectId].annotations[field];
+        }
+        annoData.push(anno);
+    }
+    return annoData
 }

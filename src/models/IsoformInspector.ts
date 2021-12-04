@@ -1,10 +1,9 @@
 import { createContext, useContext } from "react";
 import { types, Instance, flow } from 'mobx-state-tree';
-import Subject from './subject';
 import Feature from './feature';
 import { ObservationModel } from './observation';
 import { fetchUrlData } from '../dataAdapters/adapterWebAPI'
-import { getNivoData, getVisxData } from '../dataAdapters/utils'
+import { getNivoData, getVisxData, getSubjAnnoData } from '../dataAdapters/utils'
 import { subjectIds, subjectType } from '../dataAdapters/utils'
 
 
@@ -24,18 +23,15 @@ export default function IsoformInspector() {
 
             subjectType: types.string,
             subjectIds: types.array(types.string),
-            subjects: types.array(Subject()),
-            subjectOrderBy: types.maybe(types.string),
-
-            subjectAnnoFields: types.array(types.string),
-            subjectAnnotations: types.array(types.string),
+            subjects: types.maybe(types.frozen()),
+            subjectAnnoFields: types.maybe(types.array(types.string)),
+            subjectOrderBy: types.maybe(types.string || types.array(types.string)),
 
             featureType: types.enumeration(['junction', 'exon', 'transcript']),
             featureIds: types.array(types.string),
             features: types.array(Feature()),
-
-            featureAnnoFields: types.array(types.string),
-            featureAnnotations: types.array(types.string),
+            featureAnnoFields: types.maybe(types.array(types.string)),
+            featureOrderBy: types.maybe(types.string || types.array(types.string)),
 
             dataState: types.string,
         })
@@ -61,6 +57,8 @@ export default function IsoformInspector() {
                     //@ts-ignore
                     self.subjects = fetchedData.subjects;
                     //@ts-ignore
+                    self.subjectAnnoFields = fetchedData.subjectAnnoFields;
+                    //@ts-ignore
                     self.featureIds = fetchedData.featureIds;
                     //@ts-ignore
                     self.features = fetchedData.features;
@@ -78,11 +76,9 @@ export default function IsoformInspector() {
             },
         }))
         .views(self => ({
-            //@ts-ignore
             nivoData() {
                 return getNivoData(self.subjectType, self.data);
             },
-            //@ts-ignore
             visxData() {
                 return getVisxData(self.data);
             },
@@ -91,6 +87,9 @@ export default function IsoformInspector() {
             },
             heatmapWidth() {
                 return self.width * 0.8
+            },
+            subjAnnoData(chartType: string) {
+                return getSubjAnnoData(self.subjectType, self.subjectIds, self.subjects);
             }
         }))
 }

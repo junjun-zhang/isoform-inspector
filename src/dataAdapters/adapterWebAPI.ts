@@ -7,6 +7,7 @@ const dataUrlPrefixPath = "data"
 export interface FetchedData {
     subjectIds: string[],
     subjects: SubjectModel[],
+    subjectAnnoFields: string[],
     featureIds: string[],
     features: FeatureModel[],
     data: ObservationModel
@@ -30,9 +31,9 @@ export async function fetchUrlData(
     };
 
     // var observationType: string = 'read_counts';
-    var subjects: SubjectModel[] = [];
+    let subjects: { [key: string]: any } = {};
 
-    var fetchAll = new Promise(async (resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
         subjectIds.reduce(async (memo, subj) => {
             await memo;
 
@@ -52,10 +53,11 @@ export async function fetchUrlData(
                     return response.json();
                 })
                 .then((myJson) => {
-                    subjects.push({
-                        subjectId: myJson.subjects[0].subject_id,
-                        subjectType: subjectType
-                    });
+                    const subjectId = myJson.subjects[0].subject_id
+                    subjects[subjectId] = {
+                        subjectType: subjectType,
+                        annotations: {}
+                    };
 
                     for (const f of myJson.subjects[0].features) {
                         f['featureId'] = f['feature_id'];
@@ -70,14 +72,13 @@ export async function fetchUrlData(
                     }
 
                     data.subjects.push({
-                        //@ts-ignore
-                        subjectId: myJson.subjects[0].subject_id,
+                        subjectId: subjectId,
                         //@ts-ignore
                         features: myJson.subjects[0].features
                     })
 
-                    if (subjectIds.length === subjects.length) {
-
+                    if (subjectIds.length === Object.keys(subjects).length) {
+                        console.log('resolved')
                         resolve(1);
                     }
                 }); 
@@ -85,8 +86,47 @@ export async function fetchUrlData(
         }, Promise.resolve());
     });
 
-    await fetchAll;
+    // now fetch subject annotations
+    let subjectAnnoFields: string[] = [];
+    for (const subjectId in subjects) {
+        const { annoFields, annotations } = await fetchSubjectAnnotations(geneId, subjectId)
+        for (const field of annoFields) {
+            if (!subjectAnnoFields.includes(field)) subjectAnnoFields.push(field)
+        }
+        subjects[subjectId].annotations = annotations
+    }
 
     //@ts-ignore
-    return { subjects, featureIds, features, data }
+    return { subjects, subjectAnnoFields, featureIds, features, data };
+}
+
+
+export async function fetchSubjectAnnotations(
+    geneId: string,
+    subjectId: string
+) {
+    const dataPath = [
+        dataUrlPrefixPath, geneId, 'subjects', subjectId, 'annotations.json'
+    ].join('/');
+
+    const response = await fetch(dataPath,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }
+    );
+
+    const myJson = await response.json();
+
+    let annoFields: string[] = [];
+    let annotations: {[key: string]: (string | number)} = {};
+
+    for (const anno of myJson.annotations) {
+        if (!annoFields.includes(anno.type)) annoFields.push(anno.type);
+        annotations[anno.type] = anno.value;
+    }
+
+    return { annoFields, annotations };
 }

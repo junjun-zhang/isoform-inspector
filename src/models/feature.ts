@@ -4,8 +4,9 @@ import { types, Instance } from 'mobx-state-tree';
 const Feature = () => {
     return types
         .model('Feature', {
-            featureId: types.string,
+            featureId: types.identifier,
             featureType: types.maybe(types.string),
+            annotations: types.maybe(types.frozen())
         })
 }
 

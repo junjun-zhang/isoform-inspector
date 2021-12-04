@@ -79,9 +79,9 @@ const Heatmap = ({model}) => {
         <div style={{ position: 'relative' }}>
             <svg ref={containerRef} width={width} height={height}>
                 <Group top={0} left={margin.left}>
-                    <foreignObject x={0} y={0} width={model.subjAnnoWidth()} height={height}>
+                    {/* <foreignObject x={0} y={0} width={model.subjAnnoWidth()} height={height}>
                         <SubjectAnnotation model={model} />
-                    </foreignObject>
+                    </foreignObject> */}
                 </Group>
                 <Group top={0} left={margin.left + width * 0.2 + separation}>
                     <foreignObject x={0} y={0} width={model.heatmapWidth()} height={height}>
