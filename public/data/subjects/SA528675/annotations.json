@@ -1,0 +1,37 @@
+{
+  "id": "SA528675",
+  "annotations": [
+    {
+      "type": "file_id",
+      "value": "FI658963"
+    },
+    {
+      "type": "object_id",
+      "value": "4d89b130-34f3-5bac-b6cc-dcbf68b34819"
+    },
+    {
+      "type": "filename",
+      "value": "PCAWG.e92d6466-3fda-4534-9597-39039828d77c.STAR.v1.bam"
+    },
+    {
+      "type": "donor_id",
+      "value": "DO33488"
+    },
+    {
+      "type": "specimen_id",
+      "value": "SP110780"
+    },
+    {
+      "type": "specimen_type",
+      "value": "Primary tumour"
+    },
+    {
+      "type": "project",
+      "value": "PACA-AU"
+    },
+    {
+      "type": "size",
+      "value": "9.983386496E9"
+    }
+  ]
+}

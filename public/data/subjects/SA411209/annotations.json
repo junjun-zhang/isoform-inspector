@@ -1,0 +1,37 @@
+{
+  "id": "SA411209",
+  "annotations": [
+    {
+      "type": "file_id",
+      "value": "FI659285"
+    },
+    {
+      "type": "object_id",
+      "value": "af4668c2-3dd9-54ab-a014-6fcd63e48800"
+    },
+    {
+      "type": "filename",
+      "value": "PCAWG.8e0862eb-73e2-42c0-b809-9510a888b931.STAR.v1.bam"
+    },
+    {
+      "type": "donor_id",
+      "value": "DO33480"
+    },
+    {
+      "type": "specimen_id",
+      "value": "SP71766"
+    },
+    {
+      "type": "specimen_type",
+      "value": "Primary tumour - solid tissue"
+    },
+    {
+      "type": "project",
+      "value": "PACA-AU"
+    },
+    {
+      "type": "size",
+      "value": "4.321825896E9"
+    }
+  ]
+}

@@ -13,7 +13,7 @@ export const InputForm = ({ model }: { model: any}) => {
             }}>
                 <option value=""></option>
                 <option value="ENSG00000068878.10">ENSG00000068878.10</option>
-                <option value="ENSG00000127481.10">ENSG00000127481.10</option>
+                <option value="ENSG00000011114.10">ENSG00000011114.10</option>
                 <option value="ENSG00000163349.17">ENSG00000163349.17</option>
             </select>&nbsp;&nbsp;
             {/* Color: <select name="color" onChange={(e) => setColors(e.target.value)}>

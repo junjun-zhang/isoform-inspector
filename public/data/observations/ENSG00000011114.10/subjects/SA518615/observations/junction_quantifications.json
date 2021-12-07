@@ -1,0 +1,59 @@
+{
+  "feature_type": "junction_quantification",
+  "observation_type": "read_counts",
+  "subjects": [
+    {
+      "subject_id": "SA518615",
+      "features": [
+        {
+          "feature_id": "14:93709435-93712170",
+          "value": 50
+        },
+        {
+          "feature_id": "14:93712633-93714821",
+          "value": 22
+        },
+        {
+          "feature_id": "14:93715001-93717808",
+          "value": 46
+        },
+        {
+          "feature_id": "14:93717999-93719992",
+          "value": 51
+        },
+        {
+          "feature_id": "14:93720137-93723540",
+          "value": 85
+        },
+        {
+          "feature_id": "14:93723702-93760203",
+          "value": 2
+        },
+        {
+          "feature_id": "14:93723702-93727947",
+          "value": 100
+        },
+        {
+          "feature_id": "14:93728024-93730130",
+          "value": 98
+        },
+        {
+          "feature_id": "14:93730340-93799165",
+          "value": 2
+        },
+        {
+          "feature_id": "14:93730340-93760203",
+          "value": 42
+        },
+        {
+          "feature_id": "14:93755077-93760203",
+          "value": 0
+        },
+        {
+          "feature_id": "14:93761284-93762315",
+          "value": 88
+        }
+      ]
+    }
+  ]
+}

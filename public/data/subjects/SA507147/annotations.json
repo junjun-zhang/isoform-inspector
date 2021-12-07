@@ -2,6 +2,14 @@
   "id": "SA507147",
   "annotations": [
     {
+      "type": "file_id",
+      "value": "FI33547"
+    },
+    {
+      "type": "object_id",
+      "value": "2d8b4e8f-1277-5257-8c30-69d6555755d6"
+    },
+    {
       "type": "filename",
       "value": "PCAWG.38f55f38-dd3a-11e4-8250-fdd5c254ba06.STAR.v1.bam"
     },
@@ -10,20 +18,20 @@
       "value": "DO47004"
     },
     {
-      "type": "gender",
-      "value": "male"
+      "type": "specimen_id",
+      "value": "SP103308"
     },
     {
-      "type": "vital_status",
-      "value": "alive"
+      "type": "specimen_type",
+      "value": "Normal - tissue adjacent to primary"
     },
     {
-      "type": "primary_site",
-      "value": "kidney"
+      "type": "project",
+      "value": "RECA-EU"
     },
     {
-      "type": "age_at_diagnosis",
-      "value": "50"
+      "type": "size",
+      "value": "6.595197156E9"
     }
   ]
 }

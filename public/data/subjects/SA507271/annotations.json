@@ -2,6 +2,14 @@
   "id": "SA507271",
   "annotations": [
     {
+      "type": "file_id",
+      "value": "FI27642"
+    },
+    {
+      "type": "object_id",
+      "value": "b052ecdb-750a-5a0e-8127-3a63e76f769b"
+    },
+    {
       "type": "filename",
       "value": "PCAWG.da2e717a-dd38-11e4-bd8b-d8bac254ba06.STAR.v1.bam"
     },
@@ -10,20 +18,20 @@
       "value": "DO46859"
     },
     {
-      "type": "gender",
-      "value": "male"
+      "type": "specimen_id",
+      "value": "SP102842"
     },
     {
-      "type": "vital_status",
-      "value": "alive"
+      "type": "specimen_type",
+      "value": "Primary tumour - solid tissue"
     },
     {
-      "type": "primary_site",
-      "value": "kidney"
+      "type": "project",
+      "value": "RECA-EU"
     },
     {
-      "type": "age_at_diagnosis",
-      "value": "50"
+      "type": "size",
+      "value": "9.324389918E9"
     }
   ]
 }
