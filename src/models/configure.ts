@@ -12,10 +12,12 @@ const Configure = () => {
             feature: types.model({
                 featureType: types.enumeration(['exon', 'junction']),
                 featureDataSource: types.string,
+                featureOrderBy: types.maybe(types.string || types.array(types.string)),
             }),
             subject: types.model({
                 subjectType: types.enumeration(['sample', 'cell']),
                 subjectDataSource: types.string,
+                subjectOrderBy: types.maybe(types.string || types.array(types.string)),
             }),
             observation: types.model({
                 observationType: types.enumeration(['read_counts']),

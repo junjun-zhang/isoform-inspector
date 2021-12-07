@@ -42,8 +42,6 @@ const HeatmapV = ({model}) => {
 
     const binData = model.visxData;
 
-    console.log('binData: ', binData)
-
     if (binData.length === 0) return null;
 
     function max(data, value) {

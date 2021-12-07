@@ -9,8 +9,7 @@ const Subject = () => {
             currentSubjectId: types.maybe(types.string),
             subjectAnnoFields: types.maybe(types.array(types.string)),
             // object{key: subjectId, value: object{key: field, value: any}}
-            subjects: types.maybe(types.frozen()),
-            subjectOrderBy: types.maybe(types.string || types.array(types.string)),
+            subjects: types.maybe(types.map(types.frozen())),
         })
         .actions(self => ({
             setCurrentSubjectId(subjectId: string | undefined) {

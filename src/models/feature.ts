@@ -9,8 +9,7 @@ const Feature = () => {
             currentFeatureId: types.maybe(types.string),
             featureAnnoFields: types.maybe(types.array(types.string)),
             // object{key: subjectId, value: object{key: field, value: any}}
-            features: types.maybe(types.frozen()),
-            featureOrderBy: types.maybe(types.string || types.array(types.string)),
+            features: types.maybe(types.map(types.frozen())),
         })
         .actions(self => ({
             setCurrentFeatureId(featureId: string | undefined) {

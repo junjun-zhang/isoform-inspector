@@ -10,7 +10,6 @@ import { Grid } from '@material-ui/core';
 
 
 const IsoformInspector = observer(({model}: {model: any}) => {
-
     return (
         <div>
             <h3>Transcript Isoform Inspector</h3>
@@ -26,7 +25,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                 <Grid item xs={12}>
                     <HeatmapV model={model} />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Heatmap model={model} />
                 </Grid>
                 <Grid item xs={3}>
@@ -34,7 +33,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                 </Grid>
                 <Grid item xs={9}>
                     <HeatmapN model={model} />
-                </Grid>
+                </Grid> */}
             </Grid>
         </div>
     );

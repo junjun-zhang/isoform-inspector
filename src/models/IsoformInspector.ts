@@ -26,7 +26,7 @@ export default function IsoformInspector() {
             setGeneId: flow(function* (geneId) {
                 self.dataState = 'pending';
                 try {
-                    // fetch subjects first
+                    // fetch subjects first, later this should be done elsewhere, not under setGeneId
                     const fetchedSubjects = yield fetchSubjects(self.configure.subject.subjectDataSource);
                     //@ts-ignore
                     self.subjects = {
@@ -113,11 +113,13 @@ export function initializeStore() {
             geneId: undefined,
             feature: {
                 featureType: 'junction',
-                featureDataSource: 'WebAPI'
+                featureDataSource: 'WebAPI',
+                featureOrderBy: 'coordinates'
             },
             subject: {
                 subjectType: 'sample',
                 subjectDataSource: 'WebAPI',
+                subjectOrderBy: 'clustering',
             },
             observation: {
                 observationType: 'read_counts',
