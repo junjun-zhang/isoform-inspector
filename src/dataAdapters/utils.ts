@@ -1,8 +1,7 @@
-import { ObservationModel } from '../models/observation';
-
-
+// hardcoded for now
 export const subjectType = 'sample';
 
+// hardcoded for now
 export const subjectIds = [
     "SA507131",
     "SA507134",
@@ -83,43 +82,75 @@ export const subjectIds = [
     "SA507587"
 ]
 
-export function getNivoData(subjectType: string, data: ObservationModel) {
-    var nivoData: any[] = [];
-    data.subjects.forEach((subj, i) => {
-        var count_info: { [key: string]: any } = {};
-        count_info[subjectType] = subj.subjectId;
+export function getNivoData(
+    subjectIds: string[],
+    featureIds: string[],
+    subjectType: string,
+    featureType: string,
+    observations: any
+) {
+    let nivoData: any[] = [];
+    for (const subjectId of subjectIds) {
+        let count_info: { [key: string]: any } = {};
+        count_info[subjectType] = subjectId;
 
-        subj.features.forEach((feature: any, j: number) => {
-            count_info[feature.featureId] = feature.value;
-        })
+        for (const featureId of featureIds) {
+            count_info[featureId] = observations[featureType].subjects[subjectId].features[featureId];
+        }
         nivoData.push(count_info);
-    })
+    }
     return nivoData
 }
 
-export function getVisxData(data: ObservationModel) {
+export function getVisxData(
+    subjectIds: string[],
+    featureIds: string[],
+    featureType: string,
+    observations: any
+) {
     var visxData: any[] = [];
-    
-    data.subjects.forEach((subj, i) => {
-        subj.features.forEach((feature: any, j: number) => {
+    let i = 0;
+    for (const subjectId of subjectIds) {
+        let j = 0;
+        for (const featureId of featureIds) {
             if (i === 0) {
                 visxData.push({
                     bin: j,
                     bins: [{
-                        bin: data.subjects.length - i - 1,
-                        count: feature.value
+                        bin: subjectIds.length - i - 1,
+                        count: observations[featureType].subjects[subjectId].features[featureId]
                     }]
                 })
             } else {
                 visxData[j].bins.push({
-                    bin: data.subjects.length - i - 1,
-                    count: feature.value
+                    bin: subjectIds.length - i - 1,
+                    count: observations[featureType].subjects[subjectId].features[featureId]
                 })
             }
-
-        })
-
-    })
+            j++;
+        }
+        i++;
+    }
 
     return visxData
+}
+
+export function getSubjAnnoData(
+    subjectType: string,
+    subjectIds: string[],
+    subjects: { [key: string]: any } | undefined,
+) {
+    if (subjects === undefined) return;
+
+    let annoData: any[] = [];
+    for (const subjectId of subjectIds) {
+        let anno: { [key: string]: any } = {};
+        anno[subjectType] = subjectId;
+
+        for (const field in subjects[subjectId].annotations) {
+            anno[field] = subjects[subjectId].annotations[field];
+        }
+        annoData.push(anno);
+    }
+    return annoData
 }

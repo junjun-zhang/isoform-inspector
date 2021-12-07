@@ -3,12 +3,23 @@ import { types, Instance } from 'mobx-state-tree';
 
 const Subject = () => {
     return types
-    .model('Subject', {
-        subjectId: types.string,
-        subjectType: types.maybe(types.string),
-    })
+        .model('Subject', {
+            subjectType: types.maybe(types.string),
+            subjectIds: types.array(types.string),
+            currentSubjectId: types.maybe(types.string),
+            subjectAnnoFields: types.maybe(types.array(types.string)),
+            // object{key: subjectId, value: object{key: field, value: any}}
+            subjects: types.maybe(types.map(types.frozen())),
+        })
+        .actions(self => ({
+            setCurrentSubjectId(subjectId: string | undefined) {
+                self.currentSubjectId = subjectId;
+            },
+
+        })
+)
 }
 
 export default Subject
 export type SubjectStateModel = ReturnType<typeof Subject>
-export interface SubjectModel extends Instance<SubjectStateModel> {}
+export interface SubjectType extends Instance<SubjectStateModel> {}

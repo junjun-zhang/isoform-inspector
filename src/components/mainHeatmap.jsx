@@ -13,8 +13,8 @@ export const background = '#ffffff'; // '#28272c';
 export const accentColorDark = '#75daad';
 
 const Heatmap = ({model}) => {
-    const width = model.width;
-    const height = model.height;
+    const width = model.configure.width;
+    const height = model.configure.height;
     // const events = false;
     const margin = { top: 20, left: 20, right: 20, bottom: 20 };
     const separation = 5
@@ -29,11 +29,11 @@ const Heatmap = ({model}) => {
         scroll: true,
     });
 
-    if (model.dataState !== 'done') {
+    if (model.dataState !== 'loaded') {
         return null
     }
 
-    const binData = model.visxData();
+    const binData = model.visxData;
 
     if (binData.length === 0) return null;
 
@@ -79,12 +79,12 @@ const Heatmap = ({model}) => {
         <div style={{ position: 'relative' }}>
             <svg ref={containerRef} width={width} height={height}>
                 <Group top={0} left={margin.left}>
-                    <foreignObject x={0} y={0} width={model.subjAnnoWidth()} height={height}>
+                    <foreignObject x={0} y={0} width={model.subjAnnoWidth} height={height}>
                         <SubjectAnnotation model={model} />
                     </foreignObject>
                 </Group>
                 <Group top={0} left={margin.left + width * 0.2 + separation}>
-                    <foreignObject x={0} y={0} width={model.heatmapWidth()} height={height}>
+                    <foreignObject x={0} y={0} width={model.heatmapWidth} height={height}>
                         <HeatmapN model={model} />
                     </foreignObject>
                 </Group>
@@ -130,8 +130,8 @@ const Heatmap = ({model}) => {
             </svg>
             {tooltipOpen && tooltipData && (
                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-                    <div>Sample: {model.subjectIds[tooltipData.row]}, x: {tooltipData.row}</div>
-                    <div>Junction: {model.featureIds[tooltipData.column]}, y: {tooltipData.column}</div>
+                    <div>Sample: {model.subjects.subjectIds[tooltipData.row]}, x: {tooltipData.row}</div>
+                    <div>Junction: {model.features.featureIds[tooltipData.column]}, y: {tooltipData.column}</div>
                     <div>Value: {tooltipData.count}</div>
                 </TooltipInPortal>
             )}

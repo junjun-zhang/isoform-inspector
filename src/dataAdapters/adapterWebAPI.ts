@@ -1,18 +1,16 @@
-import { SubjectModel } from "../models/subject";
-import { FeatureModel } from "../models/feature";
+// import { SubjectModel } from "../models/subject";
+import { FeatureStateModel } from "../models/feature";
 import { ObservationModel } from '../models/observation';
+import { subjectIds } from '../dataAdapters/utils'
 
 const dataUrlPrefixPath = "data"
 
 export interface FetchedData {
-    subjectIds: string[],
-    subjects: SubjectModel[],
-    featureIds: string[],
-    features: FeatureModel[],
-    data: ObservationModel
+    features: FeatureStateModel,
+    observations: ObservationModel
 }
 
-export async function fetchUrlData(
+export async function fetchObservations(
     geneId: string,
     featureType: string,
     subjectType: string,
@@ -21,23 +19,26 @@ export async function fetchUrlData(
     var localFilePrefix = featureType === 'junction' ?
         'junction_quantifications' : 'exon_quantifications';
 
-    let featureIds: string[] = [];
-    let features: any[] = [];
-    let data: { observationType: string, featureType: string, subjects: SubjectModel[] } = {
-        "observationType": "read_counts",
-        "featureType": "junction_quantification",
-        "subjects": []
+    let features: any = {
+        featureType: featureType,
+        featureIds: [],
+        currentFeatureId: undefined,
+        featureAnnoFields: [],
+        features: {},
+        featureOrderBy: '',
     };
+    let observations: any = {};
+    observations[featureType] = {
+        featureType: featureType,
+        subjects: {}
+    }
 
-    // var observationType: string = 'read_counts';
-    var subjects: SubjectModel[] = [];
-
-    var fetchAll = new Promise(async (resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
         subjectIds.reduce(async (memo, subj) => {
             await memo;
 
             const dataPath = [
-                dataUrlPrefixPath, geneId, 'subjects', subj, 'observations', `${localFilePrefix}.json`
+                dataUrlPrefixPath, 'observations', geneId, 'subjects', subj, 'observations', `${localFilePrefix}.json`
             ].join('/');
 
             return fetch(dataPath,
@@ -52,32 +53,28 @@ export async function fetchUrlData(
                     return response.json();
                 })
                 .then((myJson) => {
-                    subjects.push({
-                        subjectId: myJson.subjects[0].subject_id,
-                        subjectType: subjectType
-                    });
+                    const subjectId = myJson.subjects[0].subject_id;
+
+                    observations[featureType].subjects[subjectId] = {
+                        subjectId: subjectId,
+                        features: {}
+                    };
 
                     for (const f of myJson.subjects[0].features) {
                         f['featureId'] = f['feature_id'];
                         delete f['feature_id'];
-                        if (!featureIds.includes(f['featureId'])) {
-                            featureIds.push(f['featureId']);
-                            features.push({
+                        if (!features.featureIds.includes(f['featureId'])) {
+                            features.featureIds.push(f['featureId']);
+                            features.features[f['featureId']] = {
                                 featureId: f['featureId'],
                                 featureType: featureType
-                            });
+                            };
                         }
+                        // console.log('f: ', f)
+                        observations[featureType].subjects[subjectId].features[f['featureId']] = f.value;
                     }
 
-                    data.subjects.push({
-                        //@ts-ignore
-                        subjectId: myJson.subjects[0].subject_id,
-                        //@ts-ignore
-                        features: myJson.subjects[0].features
-                    })
-
-                    if (subjectIds.length === subjects.length) {
-
+                    if (subjectIds.length === Object.keys(observations[featureType].subjects).length) {
                         resolve(1);
                     }
                 }); 
@@ -85,8 +82,52 @@ export async function fetchUrlData(
         }, Promise.resolve());
     });
 
-    await fetchAll;
-
     //@ts-ignore
-    return { subjects, featureIds, features, data }
+    return { features, observations };
+}
+
+
+export async function fetchSubjects(
+    subjectDataSource: string | undefined
+) {
+    let subjectAnnoFields: string[] = [];
+    let subjects: {[key: string]: any} = {};
+    for (const subjectId of subjectIds) {
+        const { annoFields, annotations } = await fetchSubjectAnnotations(subjectId)
+        for (const field of annoFields) {
+            if (!subjectAnnoFields.includes(field)) subjectAnnoFields.push(field)
+        }
+        subjects[subjectId] = annotations
+    }
+
+    return {subjectIds, subjects, subjectAnnoFields}
+}
+
+export async function fetchSubjectAnnotations(
+    subjectId: string
+) {
+    const dataPath = [
+        dataUrlPrefixPath, 'subjects', subjectId, 'annotations.json'
+    ].join('/');
+
+    const response = await fetch(dataPath,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }
+    );
+
+    const myJson = await response.json();
+
+    let annoFields: string[] = [];
+    let annotations: {[key: string]: (string | number)} = {};
+
+    for (const anno of myJson.annotations) {
+        if (!annoFields.includes(anno.type)) annoFields.push(anno.type);
+        annotations[anno.type] = anno.value;
+    }
+
+    return { annoFields, annotations };
 }
