@@ -1,96 +1,98 @@
 import { createContext, useContext } from "react";
 import { types, Instance, flow } from 'mobx-state-tree';
 import Feature from './feature';
-import { ObservationModel } from './observation';
-import { fetchUrlData } from '../dataAdapters/adapterWebAPI'
+import Observation from './observation';
+import { fetchSubjects, fetchObservations } from '../dataAdapters/adapterWebAPI'
 import { getNivoData, getVisxData, getSubjAnnoData } from '../dataAdapters/utils'
-import { subjectIds, subjectType } from '../dataAdapters/utils'
+import Subject from "./subject";
+import Configure from "./configure";
 
 
 export default function IsoformInspector() {
     return types
         .model('IsoformInspector', {
             type: types.literal('IsoformInspector'),
-            displayName: types.string,
-            colors: "greens",
-            width: 1200,
-            height: 400,
+            dataState: types.enumeration(['noData', 'pending', 'loaded']),
 
-            geneId: types.string,
-
-            currentSubjectId: types.maybe(types.string),
-            currentFeatureId: types.maybe(types.string),
-
-            subjectType: types.string,
-            subjectIds: types.array(types.string),
-            subjects: types.maybe(types.frozen()),
-            subjectAnnoFields: types.maybe(types.array(types.string)),
-            subjectOrderBy: types.maybe(types.string || types.array(types.string)),
-
-            featureType: types.enumeration(['junction', 'exon', 'transcript']),
-            featureIds: types.array(types.string),
-            features: types.array(Feature()),
-            featureAnnoFields: types.maybe(types.array(types.string)),
-            featureOrderBy: types.maybe(types.string || types.array(types.string)),
-
-            dataState: types.string,
+            configure: Configure(),
+            features: types.maybe(Feature()),
+            subjects: types.maybe(Subject()),
         })
         .volatile(() => ({
-            data: (undefined as unknown) as ObservationModel,
+            observations: types.map(Observation()),
             error: types.frozen()
         }))
         .actions(self => ({
-            setDisplayName(displayName: string) {
-                self.displayName = displayName;
-            },
-            setCurrentSubjectId(subjectId: string | undefined) {
-                self.currentSubjectId = subjectId
-            },
-            setCurrentFeatureId(featureId: string | undefined) {
-                self.currentFeatureId = featureId
-            },
             setGeneId: flow(function* (geneId) {
                 self.dataState = 'pending';
                 try {
-                    const fetchedData = yield fetchUrlData(
-                        geneId, 'junction', self.subjectType, self.subjectIds)
+                    // fetch subjects first
+                    const fetchedSubjects = yield fetchSubjects(self.configure.subject.subjectDataSource);
                     //@ts-ignore
-                    self.subjects = fetchedData.subjects;
-                    //@ts-ignore
-                    self.subjectAnnoFields = fetchedData.subjectAnnoFields;
-                    //@ts-ignore
-                    self.featureIds = fetchedData.featureIds;
+                    self.subjects = {
+                        subjectType: self.configure.subject.subjectType,
+                        //@ts-ignore
+                        subjectIds: fetchedSubjects.subjectIds,
+                        //@ts-ignore
+                        subjects: fetchedSubjects.subjects,
+                        //@ts-ignore
+                        subjectAnnoFields: fetchedSubjects.subjectAnnoFields
+                    };
+
+                    // then fetch features, to be added when gene model data source is available
+
+                    // finally fetch observations, for now fetch features at this step as well
+                    const fetchedData = yield fetchObservations(
+                        geneId,
+                        self.configure.feature.featureType,
+                        self.configure.subject.subjectType,
+                        //@ts-ignore
+                        self.subjects.subjectIds
+                    );
                     //@ts-ignore
                     self.features = fetchedData.features;
                     //@ts-ignore
-                    self.data = fetchedData.data;
+                    self.observations = fetchedData.observations;
 
-                    self.geneId = geneId;
-                    self.dataState = 'done';
+                    self.configure.geneId = geneId;
+                    self.dataState = 'loaded';
+
                 } catch (error: any) {
                     self.error = error;
                 }
             }),
-            setColors(colors: string) {
-                self.colors = colors;
-            },
         }))
         .views(self => ({
-            nivoData() {
-                return getNivoData(self.subjectType, self.data);
+            get nivoData() {
+                return getNivoData(
+                    //@ts-ignore
+                    self.subjects.subjectIds,
+                    //@ts-ignore
+                    self.features.featureIds,
+                    self.configure.subject.subjectType,
+                    self.configure.feature.featureType,
+                    self.observations
+                );
             },
-            visxData() {
-                return getVisxData(self.data);
+            get visxData() {
+                return getVisxData(
+                    //@ts-ignore
+                    self.subjects.subjectIds,
+                    //@ts-ignore
+                    self.features.featureIds,
+                    self.configure.feature.featureType,
+                    self.observations
+                );
             },
-            subjAnnoWidth() {
-                return self.width * 0.2
+            get subjAnnoWidth() {
+                return self.configure.width * 0.2
             },
-            heatmapWidth() {
-                return self.width * 0.8
+            get heatmapWidth() {
+                return self.configure.width * 0.8
             },
-            subjAnnoData(chartType: string) {
-                return getSubjAnnoData(self.subjectType, self.subjectIds, self.subjects);
-            }
+            // subjAnnoData(chartType: string) {
+            //     return getSubjAnnoData(self.subjectType, self.subjectIds, self.subjects);
+            // }
         }))
 }
 
@@ -102,15 +104,26 @@ let _store: any = null;
 export function initializeStore() {
     _store = IsoformInspector().create({
         type: 'IsoformInspector',
-        displayName: 'Transcript Isoform Inspector',
-        geneId: '',
-        colors: "greens",
-        width: 1200,
-        height: 400,
-        featureType: 'junction',
-        subjectType: subjectType,
-        subjectIds: subjectIds,
         dataState: 'noData',
+        configure: {
+            displayName: 'Transcript Isoform Inspector',
+            width: 1200,
+            height: 800,
+            theme: 'light',
+            geneId: undefined,
+            feature: {
+                featureType: 'junction',
+                featureDataSource: 'WebAPI'
+            },
+            subject: {
+                subjectType: 'sample',
+                subjectDataSource: 'WebAPI',
+            },
+            observation: {
+                observationType: 'read_counts',
+                observationDataSource: 'WebAPI',
+            },
+        }
     });
     return _store;
 }

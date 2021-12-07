@@ -4,12 +4,22 @@ import { types, Instance } from 'mobx-state-tree';
 const Feature = () => {
     return types
         .model('Feature', {
-            featureId: types.identifier,
             featureType: types.maybe(types.string),
-            annotations: types.maybe(types.frozen())
+            featureIds: types.maybe(types.array(types.string)),
+            currentFeatureId: types.maybe(types.string),
+            featureAnnoFields: types.maybe(types.array(types.string)),
+            // object{key: subjectId, value: object{key: field, value: any}}
+            features: types.maybe(types.frozen()),
+            featureOrderBy: types.maybe(types.string || types.array(types.string)),
         })
+        .actions(self => ({
+            setCurrentFeatureId(featureId: string | undefined) {
+                self.currentFeatureId = featureId;
+            },
+
+        }))
 }
 
 export default Feature
 export type FeatureStateModel = ReturnType<typeof Feature>
-export interface FeatureModel extends Instance<FeatureStateModel> { }
+export interface FeatureType extends Instance<FeatureStateModel> {}

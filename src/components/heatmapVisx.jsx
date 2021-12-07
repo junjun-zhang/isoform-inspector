@@ -20,11 +20,11 @@ export const background = '#ffffff'; // '#28272c';
 export const accentColorDark = '#75daad';
 
 const HeatmapV = ({model}) => {
-    const width = model.width;
-    const height = model.height;
+    const width = model.configure.width;
+    const height = model.configure.height;
     // const events = false;
     const margin = { top: 20, left: 20, right: 20, bottom: 20 };
-    const separation = 5
+    const separation = 5;
 
     const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
         useTooltip();
@@ -36,11 +36,13 @@ const HeatmapV = ({model}) => {
         scroll: true,
     });
 
-    if (model.dataState !== 'done') {
+    if (model.dataState !== 'loaded') {
         return null
     }
 
-    const binData = model.visxData();
+    const binData = model.visxData;
+
+    console.log('binData: ', binData)
 
     if (binData.length === 0) return null;
 
@@ -63,7 +65,7 @@ const HeatmapV = ({model}) => {
         domain: [0, bucketSizeMax],
     });
     const rectColorScale = scaleLinear({
-        range: colors[model.colors],
+        range: colors['reds'],
         domain: [0, colorMax],
     });
     const opacityScale = scaleLinear({
@@ -221,8 +223,8 @@ const HeatmapV = ({model}) => {
             </svg>
             {tooltipOpen && tooltipData && (
                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-                    <div>Sample: {model.subjectIds[tooltipData.row]}, row: {tooltipData.row}</div>
-                    <div>Junction: {model.featureIds[tooltipData.column]}, column: {tooltipData.column}</div>
+                    <div>Sample: {model.subjects.subjectIds[tooltipData.row]}, row: {tooltipData.row}</div>
+                    <div>Junction: {model.features.featureIds[tooltipData.column]}, column: {tooltipData.column}</div>
                     <div>Value: {tooltipData.count}</div>
                 </TooltipInPortal>
             )}

@@ -1,0 +1,29 @@
+{
+  "id": "SA507249",
+  "annotations": [
+    {
+      "type": "filename",
+      "value": "PCAWG.3f002856-dd38-11e4-951f-29b2c254ba06.STAR.v1.bam"
+    },
+    {
+      "type": "donor_id",
+      "value": "DO46853"
+    },
+    {
+      "type": "gender",
+      "value": "male"
+    },
+    {
+      "type": "vital_status",
+      "value": "alive"
+    },
+    {
+      "type": "primary_site",
+      "value": "kidney"
+    },
+    {
+      "type": "age_at_diagnosis",
+      "value": "50"
+    }
+  ]
+}

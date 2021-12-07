@@ -21,7 +21,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
             <Grid container spacing={0} alignItems="flex-start">
                 <Grid item xs={12}>
                     <InputForm model={model} />
-                    { !model.geneId && <p>Please choose a gene!</p> }
+                    { !model.configure.geneId && <p>Please choose a gene!</p> }
                 </Grid>
                 <Grid item xs={12}>
                     <HeatmapV model={model} />
@@ -30,7 +30,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                     <Heatmap model={model} />
                 </Grid>
                 <Grid item xs={3}>
-                    {/* <SubjectAnnotation model={model} /> */}
+                    <SubjectAnnotation model={model} />
                 </Grid>
                 <Grid item xs={9}>
                     <HeatmapN model={model} />

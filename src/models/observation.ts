@@ -1,23 +1,22 @@
-import { types, Instance } from 'mobx-state-tree';
-
-const SubjectWithObservation = types
-    .model('SubjectWithObservation', {
-        subjectId: types.string,
-        features: types.array(types.model({
-            featureId: types.string,
-            value: types.string || types.number
-        }))
-    })
+import { types } from 'mobx-state-tree';
 
 
-const Observation = types
-    .model('Observation', {
-        observationType: types.string,
-        featureType: types.string,
-        subjects: types.array(SubjectWithObservation),
-    })
-
+const Observation = () => {
+    return types
+        // object{key: featureType, value: object{key: subjectId, value: object{key: featureId, value: any}}}
+        .model('Observation', {
+            featureType: types.identifier,  // exon or junction
+            subjects: types.map(
+                types.model({
+                    subjectId: types.identifier,
+                    features: types.map(
+                        types.model({
+                            featureId: types.identifier,
+                            value: types.union(types.null, types.undefined, types.string, types.number)
+                        }))
+                }))
+        })
+}
 
 export default Observation
-export interface ObservationModel extends Instance<typeof Observation> { }
-export interface SubjectWithObservationModel extends Instance<typeof SubjectWithObservation> { }
+export interface ObservationModel extends ReturnType<typeof Observation> { }

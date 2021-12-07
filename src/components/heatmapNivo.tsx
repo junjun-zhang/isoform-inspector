@@ -4,18 +4,18 @@ import { HeatMapCanvas } from '@nivo/heatmap';
 
 
 export const HeatmapN = ({ model }: { model: any }) => {
-    if (model.dataState !== 'done') {
+    if (model.dataState !== 'loaded') {
         return null
     }
     console.log(model)
     return (
         <HeatMapCanvas
-            indexBy={model.subjectType}
-            keys={model.featureIds}
-            data={model.nivoData()}
-            width={model.heatmapWidth()}
-            height={model.height}
-            colors={model.colors}
+            indexBy={model.configure.subject.subjectType}
+            keys={model.features.featureIds}
+            data={model.nivoData}
+            width={model.heatmapWidth}
+            height={model.configure.height}
+            colors='reds'
             enableLabels={false}
             hoverTarget='rowColumn'
             cellHoverOpacity={1}
