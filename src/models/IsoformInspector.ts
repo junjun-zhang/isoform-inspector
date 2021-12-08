@@ -131,14 +131,19 @@ export default function IsoformInspector() {
                 );
             },
             get subjAnnoWidth() {
-                return self.configure.width * 0.2
+                return self.configure.width * 0.1
             },
             get heatmapWidth() {
-                return self.configure.width * 0.8
+                return self.configure.width * 0.9
             },
-            // subjAnnoData(chartType: string) {
-            //     return getSubjAnnoData(self.subjectType, self.subjectIds, self.subjects);
-            // }
+            get subjAnnoData() {
+                return getSubjAnnoData(
+                    self.configure.subject.subjectType,
+                    self.subjects?.subjectAnnoFields,
+                    self.subjects?.subjectIds,
+                    self.subjects?.subjects,
+                );
+            }
         }))
 }
 

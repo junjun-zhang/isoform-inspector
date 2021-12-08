@@ -83,7 +83,7 @@ const Heatmap = ({model}) => {
                         <SubjectAnnotation model={model} />
                     </foreignObject>
                 </Group>
-                <Group top={0} left={margin.left + width * 0.2 + separation}>
+                <Group top={0} left={margin.left + width * 0.1 + separation}>
                     <foreignObject x={0} y={0} width={model.heatmapWidth} height={height}>
                         <HeatmapN model={model} />
                     </foreignObject>
@@ -108,7 +108,7 @@ const Heatmap = ({model}) => {
                         />
                     </g>
                 )}
-                <rect x={0} y={0} width={width} height={height} fill={background} opacity={0}
+                {/* <rect x={0} y={0} width={width} height={height} fill={background} opacity={0}
                     onMouseLeave={() => {
                         tooltipTimeout = window.setTimeout(() => {
                             hideTooltip();
@@ -126,7 +126,7 @@ const Heatmap = ({model}) => {
                             tooltipLeft: eventSvgCoords?.x,
                         });
                     }}
-                />
+                /> */}
             </svg>
             {tooltipOpen && tooltipData && (
                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
