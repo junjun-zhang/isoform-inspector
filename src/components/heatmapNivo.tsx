@@ -7,7 +7,7 @@ export const HeatmapN = ({ model }: { model: any }) => {
     if (model.dataState !== 'loaded') {
         return null
     }
-    console.log(model.nivoData)
+
     return (
         <HeatMapCanvas
             indexBy={model.configure.subject.subjectType}

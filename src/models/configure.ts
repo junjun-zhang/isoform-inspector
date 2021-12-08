@@ -46,6 +46,9 @@ const Configure = () => {
             setSubjectType(subjectType: Instance<'sample'> | Instance<'cell'>) {
                 self.subject.subjectType = subjectType;
             },
+            setSubjectOrderBy(orderBy: string) {
+                self.subject.subjectOrderBy = orderBy;
+            }
         }))
 }
 

@@ -3,7 +3,7 @@ import { types, Instance, flow } from 'mobx-state-tree';
 import Feature from './feature';
 import Observation from './observation';
 import { fetchSubjects, fetchObservations } from '../dataAdapters/adapterWebAPI'
-import { getNivoData, getVisxData, getSubjAnnoData } from '../dataAdapters/utils'
+import { getNivoData, getVisxData, getSubjAnnoData, orderSubjectByAnnotation } from '../dataAdapters/utils'
 import Subject from "./subject";
 import Configure from "./configure";
 import { clusterData } from '@greenelab/hclust';
@@ -70,7 +70,7 @@ export default function IsoformInspector() {
                     //@ts-ignore
                     self.observations = fetchedData.observations;
 
-                    // need to perform clustering
+                    // need to perform ordering of subjects, eg, clustering or by annotation field
                     if (self.configure.subject.subjectOrderBy === 'clustering') {
                         let dataToCluster = []
                         //@ts-ignore
@@ -98,6 +98,12 @@ export default function IsoformInspector() {
                         }
                         //@ts-ignore
                         self.subjects.subjectIds = newSubjectOrder;
+                    } else if (
+                            self.configure.subject.subjectOrderBy === 'project' ||
+                            self.configure.subject.subjectOrderBy === 'specimen_type'
+                        ) {
+                        //@ts-ignore
+                        orderSubjectByAnnotation(self.subjects, self.configure.subject.subjectOrderBy);
                     }
 
                     self.configure.geneId = geneId;

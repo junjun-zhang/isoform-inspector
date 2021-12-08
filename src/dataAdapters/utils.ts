@@ -1,3 +1,5 @@
+import { SubjectStateModel } from '../models/subject'
+
 // hardcoded for now
 export const subjectType = 'sample';
 
@@ -236,7 +238,6 @@ export function getSubjAnnoData(
 
     let annoData: any[] = [];
     for (const field of subjectAnnoFields) {
-        console.log(field);
         if (field !== 'specimen_type' && field !== 'project') continue;
         let anno: { [key: string]: any } = {
             annotation: field
@@ -248,6 +249,15 @@ export function getSubjAnnoData(
         }
         annoData.push(anno);
     }
-    console.log(annoData)
     return annoData
+}
+
+export function orderSubjectByAnnotation(subjects: SubjectStateModel, orderBy: string) {
+    //@ts-ignore
+    const newOrder = subjects.subjectIds.slice().sort(
+        //@ts-ignore
+        (a: string, b: string) => subjects.subjects.get(a)[orderBy] > subjects.subjects.get(b)[orderBy] ? 1 : -1
+    );
+    //@ts-ignore
+    subjects.subjectIds = newOrder;
 }
