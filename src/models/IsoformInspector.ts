@@ -6,6 +6,22 @@ import { fetchSubjects, fetchObservations } from '../dataAdapters/adapterWebAPI'
 import { getNivoData, getVisxData, getSubjAnnoData } from '../dataAdapters/utils'
 import Subject from "./subject";
 import Configure from "./configure";
+import { clusterData } from '@greenelab/hclust';
+import { agnes } from 'ml-hclust'
+
+
+function inOrderTraverse(currentNode: {[key: string]: any} | null, leafNodes: number[]) {
+    if (currentNode !== null) {
+        const leftChild = currentNode.children.length === 2 ? currentNode.children[0] : null;
+        const rightChild = currentNode.children.length === 2 ? currentNode.children[1]: null;
+
+        inOrderTraverse(rightChild, leafNodes);
+
+        if (currentNode.isLeaf) leafNodes.push(currentNode.index)
+
+        inOrderTraverse(leftChild, leafNodes);
+    }
+}
 
 
 export default function IsoformInspector() {
@@ -53,6 +69,36 @@ export default function IsoformInspector() {
                     self.features = fetchedData.features;
                     //@ts-ignore
                     self.observations = fetchedData.observations;
+
+                    // need to perform clustering
+                    if (self.configure.subject.subjectOrderBy === 'clustering') {
+                        let dataToCluster = []
+                        //@ts-ignore
+                        for (const subjectId of self.subjects.subjectIds) {
+                            let subjectData = []
+                            //@ts-ignore
+                            for (const featureId of self.features.featureIds) {
+                                //@ts-ignore
+                                subjectData.push(self.observations[self.configure.feature.featureType].subjects[subjectId].features[featureId]);
+                            }
+                            dataToCluster.push(subjectData);
+                        }
+
+                        // This one seems not as good
+                        // const { clusters, distances, order, clustersGivenK } = clusterData({data: dataToCluster});
+
+                        const tree = agnes(dataToCluster, { method: 'centroid' });
+                        const orderedSubjectsIndexes: number[] = []
+                        inOrderTraverse(tree, orderedSubjectsIndexes)
+
+                        let newSubjectOrder = []
+                        for (const index of orderedSubjectsIndexes) {
+                            //@ts-ignore
+                            newSubjectOrder.push(self.subjects.subjectIds[index]);
+                        }
+                        //@ts-ignore
+                        self.subjects.subjectIds = newSubjectOrder;
+                    }
 
                     self.configure.geneId = geneId;
                     self.dataState = 'loaded';
