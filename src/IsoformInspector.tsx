@@ -22,13 +22,13 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                     <InputForm model={model} />
                     { !model.configure.geneId && <p>Please choose a gene!</p> }
                 </Grid>
-                <Grid item xs={12}>
-                    <HeatmapV model={model} />
-                </Grid>
                 {/* <Grid item xs={12}>
+                    <HeatmapV model={model} />
+                </Grid> */}
+                <Grid item xs={12}>
                     <Heatmap model={model} />
                 </Grid>
-                <Grid item xs={3}>
+                {/* <Grid item xs={3}>
                     <SubjectAnnotation model={model} />
                 </Grid>
                 <Grid item xs={9}>

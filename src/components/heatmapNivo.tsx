@@ -7,7 +7,7 @@ export const HeatmapN = ({ model }: { model: any }) => {
     if (model.dataState !== 'loaded') {
         return null
     }
-    console.log(model)
+    console.log(model.nivoData)
     return (
         <HeatMapCanvas
             indexBy={model.configure.subject.subjectType}
@@ -19,7 +19,7 @@ export const HeatmapN = ({ model }: { model: any }) => {
             enableLabels={false}
             hoverTarget='rowColumn'
             cellHoverOpacity={1}
-            cellHoverOthersOpacity={0.5}
+            cellHoverOthersOpacity={0.25}
             margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
             axisTop={null}
             axisRight={null}
@@ -30,9 +30,9 @@ export const HeatmapN = ({ model }: { model: any }) => {
             labelTextColor={{ from: 'color', modifiers: [['darker', 1.8]] }}
             tooltip={({ xKey, yKey, value }) => {
                 return (
-                    <strong style={{ color: 'black' }}>
+                    <div style={{ color: 'black' }}>
                         {xKey} / {yKey}: {value}
-                    </strong>)
+                    </div>)
             }}
         />
     )

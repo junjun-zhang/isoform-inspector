@@ -160,6 +160,19 @@ export const subjectIds = [
     "SA528768",
 ]
 
+// hardcoded for now
+export const colorCode: {[key: string]: {[key: string]: string}}= {
+    project: {
+        "PACA-AU": "green",
+        "RECA-EU": "blue"
+    },
+    specimen_type: {
+        "Primary tumour - solid tissue": "red",
+        "Primary tumour": "purple",
+        "Normal - tissue adjacent to primary": "yellow",
+    }
+}
+
 export function getNivoData(
     subjectIds: string[],
     featureIds: string[],
@@ -215,20 +228,26 @@ export function getVisxData(
 
 export function getSubjAnnoData(
     subjectType: string,
-    subjectIds: string[],
+    subjectAnnoFields: string[] | undefined,
+    subjectIds: string[] | undefined,
     subjects: { [key: string]: any } | undefined,
 ) {
-    if (subjects === undefined) return;
+    if (subjectAnnoFields === undefined || subjectIds === undefined || subjects === undefined) return;
 
     let annoData: any[] = [];
-    for (const subjectId of subjectIds) {
-        let anno: { [key: string]: any } = {};
-        anno[subjectType] = subjectId;
-
-        for (const field in subjects[subjectId].annotations) {
-            anno[field] = subjects[subjectId].annotations[field];
+    for (const field of subjectAnnoFields) {
+        console.log(field);
+        if (field !== 'specimen_type' && field !== 'project') continue;
+        let anno: { [key: string]: any } = {
+            annotation: field
+        };
+        for (const subjectId of subjectIds) {
+            anno[subjectId] = 5;
+            anno[`${subjectId}_Value`] = `${subjectId}: ${subjects.get(subjectId)[field]}`;
+            anno[`${subjectId}_Color`] = colorCode[field][subjects.get(subjectId)[field]];
         }
         annoData.push(anno);
     }
+    console.log(annoData)
     return annoData
 }
