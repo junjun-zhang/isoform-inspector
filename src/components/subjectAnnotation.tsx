@@ -15,10 +15,12 @@ export const SubjectAnnotation = ({ model }: { model: any }) => {
             data={model.subjAnnoData}
             colors={({ id, data }) => String(data[`${id}_Color`])}
             enableLabel={false}
+            enableGridX={false}
+            enableGridY={false}
             width={model.subjAnnoWidth}
             height={model.configure.height}
             margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
-            tooltip={({ id, value, color, data }) => (
+            tooltip={({ id, data }) => (
                 <h6 style={{ background: 'white' }}>{data[`${id}_Value`]}</h6>
             )}
             labelTextColor={{ from: 'color', modifiers: [['darker', 1.8]] }}

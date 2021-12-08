@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { HeatMapCanvas } from '@nivo/heatmap';
+import { HeatMapCanvas, HeatMap } from '@nivo/heatmap';
 
 
 export const HeatmapN = ({ model }: { model: any }) => {
