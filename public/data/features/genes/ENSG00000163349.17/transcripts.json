@@ -1,0 +1,136 @@
+{
+    "transcript": [
+        {
+            "chromosome": "chr1",
+            "end": 113973648,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929192,
+            "strand": "+",
+            "transcriptId": "ENST00000426820.6"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113972073,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929374,
+            "strand": "+",
+            "transcriptId": "ENST00000369559.8"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113977869,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929374,
+            "strand": "+",
+            "transcriptId": "ENST00000626993.2"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113977804,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929710,
+            "strand": "+",
+            "transcriptId": "ENST00000369558.5"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113973571,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929755,
+            "strand": "+",
+            "transcriptId": "ENST00000369561.8"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113973897,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113929859,
+            "strand": "+",
+            "transcriptId": "ENST00000369555.6"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113940740,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113930505,
+            "strand": "+",
+            "transcriptId": "ENST00000514621.5"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113940702,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113930728,
+            "strand": "+",
+            "transcriptId": "ENST00000503968.1"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113977804,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113951145,
+            "strand": "+",
+            "transcriptId": "ENST00000340480.8"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113973881,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113953877,
+            "strand": "+",
+            "transcriptId": "ENST00000369553.5"
+        },
+        {
+            "chromosome": "chr1",
+            "end": 113977804,
+            "featureType": "transcript",
+            "gencodeId": "ENSG00000163349.21",
+            "gencodeVersion": "v26",
+            "geneSymbol": "HIPK1",
+            "genomeBuild": "GRCh38/hg38",
+            "start": 113963440,
+            "strand": "+",
+            "transcriptId": "ENST00000361587.3"
+        }
+    ]
+}

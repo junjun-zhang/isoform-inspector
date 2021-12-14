@@ -131,3 +131,20 @@ export async function fetchSubjectAnnotations(
 
     return { annoFields, annotations };
 }
+
+
+export async function fetchFeatures(
+    mainFeatureId: string,
+    featureDataSource: string | undefined
+) {
+    const transcriptDataPath = [
+        dataUrlPrefixPath, 'features', 'genes', mainFeatureId, 'transcripts.json'
+    ].join('/');
+
+    const exonDataPath = [
+        dataUrlPrefixPath, 'features', 'genes', mainFeatureId, 'exons.json'
+    ].join('/');
+
+
+    // return { featureIds, features }
+}
