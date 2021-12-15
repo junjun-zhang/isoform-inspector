@@ -47,7 +47,16 @@ export const SubjectAnnotation = ({ model, width, height }: { model: any, width:
                 model.setCurrentPanel('subjectAnnotation');
                 model.setCurrentX(eventSvgCoords?.x)
                 model.setCurrentY(eventSvgCoords?.y)
-                model.subjects.setCurrentSubjectId('SA000000');
+                if (model.uiState.currentY) {
+                    const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / 3.59);  // 3.59 pixels per row
+                    if (subjectIdIdx < model.subjects.subjectIds.length) {
+                        model.subjects.setCurrentSubjectId(model.subjects.subjectIds[subjectIdIdx]);
+                    } else {
+                        model.subjects.setCurrentSubjectId(undefined);
+                    }
+                } else {
+                    model.subjects.setCurrentSubjectId(undefined);
+                }
                 model.features.setCurrentFeatureId(undefined);
             }}
         />

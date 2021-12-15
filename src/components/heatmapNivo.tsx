@@ -63,12 +63,20 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                     model.setCurrentX(eventSvgCoords?.x)
                     model.setCurrentY(eventSvgCoords?.y)
                     model.subjects.setCurrentSubjectId('SA000099');
+                    if (model.uiState.currentY) {
+                        const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / 3.59);  // 3.59 pixels per row
+                        if (subjectIdIdx < model.subjects.subjectIds.length) {
+                            model.subjects.setCurrentSubjectId(model.subjects.subjectIds[subjectIdIdx]);
+                        } else {
+                            model.subjects.setCurrentSubjectId(undefined);
+                        }
+                    } else {
+                        model.subjects.setCurrentSubjectId(undefined);
+                    }
+
                     if (model.uiState.currentX) {
-                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.1);
-                        console.log(model.features.featureIds.length);
-                        console.log(featureIdIdx);
+                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.1);  // 20.1 pixels per column
                         if (featureIdIdx < model.features.featureIds.length) {
-                            console.log(model.features.featureIds[featureIdIdx])
                             model.features.setCurrentFeatureId(model.features.featureIds[featureIdIdx]);
                         } else {
                             model.features.setCurrentFeatureId(undefined);
