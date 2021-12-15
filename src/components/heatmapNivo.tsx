@@ -6,51 +6,22 @@ import { Line } from '@visx/shape';
 
 export const accentColorDark = '#75daad';
 
-export const HeatmapN = ({ model }: { model: any }) => {
-    if (model.dataState !== 'loaded') {
-        return null
+function featureIdToX(featureIdIdx: number | undefined): number | undefined {
+    if (featureIdIdx !== undefined && featureIdIdx >= 0) {
+        return featureIdIdx * 20 + 12
     }
+    return undefined
+}
 
-    return (
-        <HeatMapCanvas
-            indexBy={model.configure.subject.subjectType}
-            keys={model.features.featureIds}
-            data={model.nivoData}
-            width={model.heatmapWidth}
-            height={model.configure.height * 0.7}
-            colors='reds'
-            enableLabels={false}
-            hoverTarget='rowColumn'
-            cellHoverOpacity={1}
-            cellHoverOthersOpacity={0.25}
-            margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={null}
-            axisLeft={null}
-            cellOpacity={1}
-            cellBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-            labelTextColor={{ from: 'color', modifiers: [['darker', 1.8]] }}
-            tooltip={({ xKey, yKey, value }) => {
-                return (
-                    <div style={{ color: 'black' }}>
-                        {xKey} / {yKey}: {value}
-                    </div>)
-            }}
-        />
-    )
-};
 
-// export default observer(HeatmapN);
-
-export const HeatmapNew = ({ model, width, height }: { model: any, width: number, height: number }) => {
+export const HeatmapN = ({ model, width, height }: { model: any, width: number, height: number }) => {
     if (model.dataState !== 'loaded') {
         return null
     }
 
     return (
         <>
-            <foreignObject x={0} y={40} width={width} height={height}>
+            <foreignObject x={0} y={0} width={width} height={height}>
                 <HeatMapCanvas
                     indexBy={model.configure.subject.subjectType}
                     keys={model.features.featureIds}
@@ -78,22 +49,55 @@ export const HeatmapNew = ({ model, width, height }: { model: any, width: number
                     }}
                 />
             </foreignObject>
-            <rect x={0} y={40} width={width} height={height} opacity={0}
+            <rect x={0} y={0} width={width} height={height} opacity={0}
                 onMouseLeave={() => {
+                    model.setCurrentPanel(undefined);
+                    model.setCurrentX(undefined)
+                    model.setCurrentY(undefined)
                     model.subjects.setCurrentSubjectId(undefined);
                     model.features.setCurrentFeatureId(undefined);
                 }}
                 onMouseMove={(event) => {
                     const eventSvgCoords = localPoint(event);
-                    model.subjects.setCurrentSubjectId(`${eventSvgCoords?.y}`);
+                    model.setCurrentPanel('heatmap');
+                    model.setCurrentX(eventSvgCoords?.x)
+                    model.setCurrentY(eventSvgCoords?.y)
+                    model.subjects.setCurrentSubjectId('SA000099');
+                    if (model.uiState.currentX) {
+                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.1);
+                        console.log(model.features.featureIds.length);
+                        console.log(featureIdIdx);
+                        if (featureIdIdx < model.features.featureIds.length) {
+                            console.log(model.features.featureIds[featureIdIdx])
+                            model.features.setCurrentFeatureId(model.features.featureIds[featureIdIdx]);
+                        } else {
+                            model.features.setCurrentFeatureId(undefined);
+                        }
+                    } else {
+                        model.features.setCurrentFeatureId(undefined);
+                    }
                 }}
             />
             {
-                model.subjects.currentSubjectId && (
+                model.uiState.currentY && model.uiState.currentY <= height && (
                     <g>
                         <Line
-                            from={{ x: 0, y: model.subjects.currentSubjectId }}
-                            to={{ x: width, y: model.subjects.currentSubjectId }}
+                            from={{ x: 0, y: model.uiState.currentY }}
+                            to={{ x: width, y: model.uiState.currentY }}
+                            stroke={accentColorDark}
+                            strokeWidth={2}
+                            pointerEvents="none"
+                            strokeDasharray="5,2"
+                        />
+                    </g>
+                )
+            }
+            {
+                model.features?.currentFeatureId && (
+                    <g>
+                        <Line
+                            from={{ x: featureIdToX(model.features.featureIds.indexOf(model.features.currentFeatureId)), y: 0 }}
+                            to={{ x: featureIdToX(model.features.featureIds.indexOf(model.features.currentFeatureId)), y: height }}
                             stroke={accentColorDark}
                             strokeWidth={2}
                             pointerEvents="none"
@@ -106,4 +110,4 @@ export const HeatmapNew = ({ model, width, height }: { model: any, width: number
     )
 };
 
-export default observer(HeatmapNew);
+export default observer(HeatmapN);

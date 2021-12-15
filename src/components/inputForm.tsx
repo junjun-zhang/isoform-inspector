@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 export const InputForm = ({ model }: { model: any}) => {
     const [geneId, setGeneId] = React.useState("");
     const [orderBy, setOrderBy] = React.useState(model.configure.subject.subjectOrderBy ?? "clustering");
-    console.log(model)
+
     return (
         <div>
             Gene: <select name="geneId" onChange={async (e) => {

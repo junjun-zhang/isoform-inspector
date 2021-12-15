@@ -30,6 +30,12 @@ export default function IsoformInspector() {
             type: types.literal('IsoformInspector'),
             dataState: types.enumeration(['noData', 'pending', 'loaded']),
 
+            uiState: types.model({
+                currentPanel: types.maybe(types.enumeration(['subjectAnnotation', 'heatmap', 'feature'])),
+                currentX: types.maybe(types.number),
+                currentY: types.maybe(types.number),
+            }),
+
             configure: Configure(),
             features: types.maybe(Feature()),
             subjects: types.maybe(Subject()),
@@ -39,6 +45,15 @@ export default function IsoformInspector() {
             error: types.frozen()
         }))
         .actions(self => ({
+            setCurrentPanel(currentPanel: 'subjectAnnotation' | 'heatmap' | 'feature' | undefined) {
+                self.uiState.currentPanel = currentPanel;
+            },
+            setCurrentX(currentX: number | undefined) {
+                self.uiState.currentX = currentX;
+            },
+            setCurrentY(currentY: number | undefined) {
+                self.uiState.currentY = currentY;
+            },
             setGeneId: flow(function* (geneId) {
                 self.dataState = 'pending';
                 try {
@@ -162,6 +177,7 @@ export function initializeStore() {
     _store = IsoformInspector().create({
         type: 'IsoformInspector',
         dataState: 'noData',
+        uiState: {},
         configure: {
             displayName: 'Transcript Isoform Inspector',
             width: 1200,

@@ -184,7 +184,6 @@ export function getNivoData(
 ) {
     let nivoData: any[] = [];
     for (const subjectId of subjectIds) {
-        console.log(subjectId)
         let count_info: { [key: string]: any } = {};
         count_info[subjectType] = subjectId;
 
@@ -193,7 +192,7 @@ export function getNivoData(
         }
         nivoData.push(count_info);
     }
-    console.log(nivoData)
+
     return nivoData
 }
 
