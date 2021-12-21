@@ -2,12 +2,13 @@ import { createContext, useContext } from "react";
 import { types, Instance, flow } from 'mobx-state-tree';
 import Feature from './feature';
 import Observation from './observation';
-import { fetchSubjects, fetchObservations } from '../dataAdapters/adapterWebAPI'
+import { fetchSubjects, fetchFeatures, fetchObservations } from '../dataAdapters/adapterWebAPI'
 import { getNivoData, getVisxData, getSubjAnnoData, orderSubjectByAnnotation } from '../dataAdapters/utils'
 import Subject from "./subject";
 import Configure from "./configure";
 import { clusterData } from '@greenelab/hclust';
 import { agnes } from 'ml-hclust'
+import { features } from "process";
 
 
 function inOrderTraverse(currentNode: {[key: string]: any} | null, leafNodes: number[]) {
@@ -70,7 +71,11 @@ export default function IsoformInspector() {
                         subjectAnnoFields: fetchedSubjects.subjectAnnoFields
                     };
 
-                    // then fetch features, to be added when gene model data source is available
+                    // then fetch features
+                    self.features = yield fetchFeatures(
+                        geneId,
+                        self.configure.feature.featureDataSource
+                    );
 
                     // finally fetch observations, for now fetch features at this step as well
                     const fetchedData = yield fetchObservations(
@@ -81,8 +86,6 @@ export default function IsoformInspector() {
                         self.subjects.subjectIds
                     );
                     //@ts-ignore
-                    self.features = fetchedData.features;
-                    //@ts-ignore
                     self.observations = fetchedData.observations;
 
                     // need to perform ordering of subjects, eg, clustering or by annotation field
@@ -92,7 +95,7 @@ export default function IsoformInspector() {
                         for (const subjectId of self.subjects.subjectIds) {
                             let subjectData = []
                             //@ts-ignore
-                            for (const featureId of self.features.featureIds) {
+                            for (const featureId of fetchedData.features.featureIds) {
                                 //@ts-ignore
                                 subjectData.push(self.observations[self.configure.feature.featureType].subjects[subjectId].features[featureId]);
                             }
@@ -135,7 +138,7 @@ export default function IsoformInspector() {
                     //@ts-ignore
                     self.subjects.subjectIds,
                     //@ts-ignore
-                    self.features.featureIds,
+                    self.heatmapFeatureIds,
                     self.configure.subject.subjectType,
                     self.configure.feature.featureType,
                     self.observations
@@ -146,16 +149,34 @@ export default function IsoformInspector() {
                     //@ts-ignore
                     self.subjects.subjectIds,
                     //@ts-ignore
-                    self.features.featureIds,
+                    self.heatmapFeatureIds,
                     self.configure.feature.featureType,
                     self.observations
                 );
+            },
+            get heatmapFeatureIds() {
+                let featureIds: string[] = [];
+                //@ts-ignore
+                [...self.features.features.values()].map((feature) => {
+                    if (feature.featureType === self.configure.feature.featureType) {
+                        featureIds.push(feature.featureId);
+                    }
+                });
+                return featureIds;
             },
             get subjAnnoWidth() {
                 return self.configure.width * 0.1
             },
             get heatmapWidth() {
                 return self.configure.width * 0.9
+            },
+            get featurePanelHeight() {
+                if (!self.features) {
+                    return 10;
+                }
+                //@ts-ignore
+                const transcriptCount = [...self.features.features.values()].filter(feature => feature.featureType === 'transcript').length;
+                return transcriptCount * self.configure.featureHeight + 100
             },
             get subjAnnoData() {
                 return getSubjAnnoData(
@@ -164,6 +185,42 @@ export default function IsoformInspector() {
                     self.subjects?.subjectIds,
                     self.subjects?.subjects,
                 );
+            },
+            get transcripts(): { [key: string]: any } {
+                let transcripts: {[key: string]: any} = {}
+                //@ts-ignore
+                let features = [...self.features.features.values()];
+                let transcriptFeatures = features.filter(feature => feature.featureType === 'transcript');
+                let exonOrJunectionFeatures = features.filter(feature => ['exon', 'junction'].includes(feature.featureType));
+
+                //@ts-ignore
+                transcriptFeatures.map((transcript) => {
+                    let transcriptLength = 0;
+                    let exonCount = 0;
+                    let offSet = 0;
+                    const f = exonOrJunectionFeatures.filter((f) => f.parentFeatureId.includes(transcript.featureId));
+                    let updatedFeatures = []
+                    for (let c of f) {
+                        let newC = {...c};
+                        if (c.featureType === 'exon') {
+                            newC.offSet = offSet;
+                            transcriptLength += c.end - c.start + 1;
+                            offSet += c.end - c.start + 1;
+                            exonCount++;
+                        } else if (c.featureType === 'junction') {
+                            newC.offSet = offSet;
+                            offSet += 50;  // set intron/junction to 50 bases
+                        }
+                        updatedFeatures.push(newC)
+                    }
+                    transcripts[transcript.featureId] = {
+                        transcriptLength,
+                        exonCount,
+                        pixelsPerBase: this.heatmapWidth / offSet * 0.97,
+                        exonAndJunctions: updatedFeatures
+                    }
+                });
+                return transcripts;
             }
         }))
 }
@@ -181,7 +238,8 @@ export function initializeStore() {
         configure: {
             displayName: 'Transcript Isoform Inspector',
             width: 1200,
-            height: 800,
+            heatmapHeight: 600,
+            featureHeight: 20,
             theme: 'light',
             geneId: undefined,
             feature: {

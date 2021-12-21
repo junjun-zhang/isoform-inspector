@@ -6,7 +6,8 @@ const Configure = () => {
         .model('Configure', {
             displayName: "Isoform Inspection",
             width: 1200,
-            height: 800,
+            heatmapHeight: 800,
+            featureHeight: 8,
             theme: types.enumeration(['light', 'dark']),
             geneId: types.maybe(types.string),
             feature: types.model({
@@ -31,8 +32,11 @@ const Configure = () => {
             setWidth(width: number) {
                 self.width = width;
             },
-            setHeight(height: number) {
-                self.height = height;
+            setHeight(heatmapHeight: number) {
+                self.heatmapHeight = heatmapHeight;
+            },
+            setFeatureHeight(featureHeight: number) {
+                self.featureHeight = featureHeight;
             },
             setTheme(theme: string) {
                 self.theme = theme;

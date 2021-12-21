@@ -59,8 +59,42 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
 
     return (
         <>
-            <text>Transcript Isoforms</text>
             {
+                Object.entries(model.transcripts).map(
+                    //@ts-ignore
+                    ([k, t], i) => t.exonAndJunctions.map(
+                        (c: any, j: number) => (
+                            <rect
+                                key={c.featureId}
+                                //@ts-ignore
+                                width={(c.featureType === 'exon' ? (c.end - c.start + 1) : 50) * t.pixelsPerBase}
+                                height={c.featureType === 'exon' ? model.configure.featureHeight * 0.7 : 3}
+                                //@ts-ignore
+                                x={c.offSet * t.pixelsPerBase}
+                                y={i * model.configure.featureHeight + 20 + (c.featureType === 'junction' ? 6 : 0)}
+                                stroke={model.features.currentFeatureId === `${c.featureId}` ? "red" : "black"}
+                                fill={model.features.currentFeatureId === `${c.featureId}` ? "red" : "#ddd"}
+                                onMouseLeave={() => {
+                                    model.setCurrentPanel(undefined);
+                                    model.setCurrentX(undefined)
+                                    model.setCurrentY(undefined)
+                                    model.subjects.setCurrentSubjectId(undefined);
+                                    model.features.setCurrentFeatureId(undefined);
+                                }}
+                                onMouseMove={(event) => {
+                                    const eventSvgCoords = localPoint(event);
+                                    model.setCurrentPanel('feature');
+                                    model.setCurrentX(eventSvgCoords?.x)
+                                    model.setCurrentY(eventSvgCoords?.y)
+                                    model.subjects.setCurrentSubjectId(undefined);
+                                    model.features.setCurrentFeatureId(`${c.featureId}`);
+                                }}
+                            />
+                        )
+                    )
+                )
+            }
+            {/* {
                 <rect key={`transcript-1`} width={width} height={2} x={0} y={30} />
             }
             {
@@ -90,7 +124,7 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
                         }}
                     />
                 )
-            }
+            } */}
         </>
     );
 };

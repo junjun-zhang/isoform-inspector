@@ -8,7 +8,7 @@ export const accentColorDark = '#75daad';
 
 function featureIdToX(featureIdIdx: number | undefined): number | undefined {
     if (featureIdIdx !== undefined && featureIdIdx >= 0) {
-        return featureIdIdx * 20 + 12
+        return featureIdIdx * 20.22 + 12
     }
     return undefined
 }
@@ -24,7 +24,7 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
             <foreignObject x={0} y={0} width={width} height={height}>
                 <HeatMapCanvas
                     indexBy={model.configure.subject.subjectType}
-                    keys={model.features.featureIds}
+                    keys={model.heatmapFeatureIds}
                     data={model.nivoData}
                     width={width}
                     height={height}
@@ -75,7 +75,7 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                     }
 
                     if (model.uiState.currentX) {
-                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.1);  // 20.1 pixels per column
+                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.22);  // 20.22 pixels per column
                         if (featureIdIdx < model.features.featureIds.length) {
                             model.features.setCurrentFeatureId(model.features.featureIds[featureIdIdx]);
                         } else {

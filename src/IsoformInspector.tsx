@@ -11,7 +11,7 @@ import { GeneModel } from "./components/geneModel";
 
 const IsoformInspector = observer(({model}: {model: any}) => {
     const width = model.configure.width;
-    const height = model.configure.height;
+    const heatmapHeight = model.configure.heatmapHeight;
     // const events = false;
     const margin = { top: 20, left: 20, right: 20, bottom: 20 };
     const separation = 5
@@ -30,24 +30,26 @@ const IsoformInspector = observer(({model}: {model: any}) => {
         color: 'white',
     };
 
+    console.log(model)
     return (
         <div>
             <h3>Transcript Isoform Inspector</h3>
             <InputForm model={model} />
             <div style={{ position: 'relative' }}>
-                <svg ref={containerRef} width={width} height={height}>
+                <svg ref={containerRef} width={width} height={heatmapHeight + model.featurePanelHeight}>
                     <Group top={0} left={margin.left}>
                         {/* subject annotation panel */}
-                        <SubjectAnnotation model={model} width={model.subjAnnoWidth} height={height * 0.7} />
+                        <SubjectAnnotation model={model} width={model.subjAnnoWidth} height={heatmapHeight} />
 
                     </Group>
                     <Group top={0} left={margin.left + width * 0.1 + separation}>
                         {/* main heatmap panel */}
-                        <HeatmapN model={model} width={model.heatmapWidth} height={height * 0.7} />
+                        <HeatmapN model={model} width={model.heatmapWidth - margin.left - separation} height={heatmapHeight} />
                     </Group>
-                    <Group top={height * 0.7 + 60} left={margin.left + width * 0.1 + separation}>
+                    <Group top={heatmapHeight + 60} left={margin.left + width * 0.1 + separation}>
                         {/* gene / transcript panel */}
-                        <GeneModel model={model} width={model.heatmapWidth} height={height} />
+                        {model.dataState === 'loaded' && <text>Transcript Isoforms</text>}
+                        <GeneModel model={model} width={model.heatmapWidth} height={model.featurePanelHeight} />
                     </Group>
                 </svg>
                 {(model.subjects?.currentSubjectId || model.features?.currentFeatureId) && (
