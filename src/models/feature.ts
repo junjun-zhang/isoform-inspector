@@ -7,6 +7,7 @@ const Feature = () => {
             featureTypes: types.array(types.string),
             featureIds: types.maybe(types.array(types.string)),
             currentFeatureId: types.maybe(types.string),
+            totalBasesToRender: types.maybe(types.number),
             featureAnnoFields: types.maybe(types.array(types.string)),
             // object{key: featureId, value: object{key: field, value: any}}
             features: types.maybe(types.map(types.frozen())),

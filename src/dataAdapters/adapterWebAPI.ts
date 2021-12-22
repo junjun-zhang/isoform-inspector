@@ -182,7 +182,10 @@ export async function fetchFeatures(
 
         let junction_start: number | undefined = undefined;
         let junction_end: number | undefined = undefined;
+        let previousExonId;
         for (const exon of transcript.exons) {
+            const featureId = `${exon.chr.replace('chr', '')}:${exon.start}-${exon.end}`;
+
             if ((junction_start && exon.strand === '+') || (junction_end && exon.strand === '-')) {
                 if (exon.strand === '+') junction_end = exon.start - 1;
                 if (exon.strand === '-') junction_start = exon.end + 1;
@@ -196,7 +199,13 @@ export async function fetchFeatures(
                         strand: exon.strand,
                         chr: exon.chr,
                         start: junction_start,
-                        end: junction_end
+                        end: junction_end,
+                        offSet: 0,
+                        //@ts-ignore
+                        len: junction_end - junction_start + 1,
+                        renderLen: 0,  // to be set later
+                        previousExon: previousExonId,
+                        nextExon: featureId
                     };
                 } else {
                     features[junctionsId].parentFeatureId.push(transcript.id);
@@ -205,7 +214,7 @@ export async function fetchFeatures(
             if (exon.strand === '+') junction_start = exon.end + 1;
             if (exon.strand === '-') junction_end = exon.start - 1;
 
-            const featureId = `${exon.chr.replace('chr', '')}:${exon.start}-${exon.end}`;
+            previousExonId = featureId;
             if (!featureIds.includes(featureId)) {
                 featureIds.push(featureId);
                 features[featureId] = {
@@ -216,7 +225,10 @@ export async function fetchFeatures(
                     strand: exon.strand,
                     chr: exon.chr,
                     start: exon.start,
-                    end: exon.end
+                    end: exon.end,
+                    offSet: 0,
+                    len: exon.end - exon.start + 1,
+                    renderLen: exon.end - exon.start + 1
                 };
             } else {
                 features[featureId].parentFeatureId.push(transcript.id);
@@ -225,29 +237,57 @@ export async function fetchFeatures(
     }
 
     // sort features by coordinates
+    // const sortedFeatures = features;
     const sortedFeatures = Object.entries(features).sort((a: any, b: any) => {
-        if (a[1].start < b[1].start) {
-            return -1;
-        } else if (a[1].start === b[1].start && a[1].end > b[1].end) {
-            return -1;
+        if (a[1].strand === '+') {
+            if (a[1].start < b[1].start) {
+                return -1;
+            } else if (a[1].start === b[1].start && a[1].end > b[1].end) {
+                return -1;
+            }
+            return 0;
+        } else {
+            if (a[1].end > b[1].end) {
+                return -1;
+            } else if (a[1].end === b[1].end && a[1].start < b[1].start) {
+                return -1;
+            }
+            return 0;
         }
-        return 0;
     }).reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 
     // add offset of each exon/junction from the start position of the first exon
-    // let offSet = 0;
-    // for (let f in sortedFeatures) {
-    //     if (sortedFeatures[f].featureType === 'exon') {
-    //         f.offSet = offSet;
-    //         len = f.end - f.start + 1;
-    //         transcriptLength += c.len;
-    //         offSet += c.len;
-    //         exonCount++;
-    //     } else if (c.featureType === 'junction') {
-    //         c.offSet = offSet;
-    //         offSet += 30;  // set intron/junction to 30 bases
-    //     }
-    // }
+    // let's do that for all exons first, then junctions
+    let totalBasesToRender = 0;
+    let offSet = 0;
+    let offSetLookup: {[key: string]: number} = {};
+    const intronBases = 50;  // 50 bases for rendering an intron
+    Object.keys(sortedFeatures).map((f) => {
+        //@ts-ignore
+        if (sortedFeatures[f].featureType === 'exon') {
+            //@ts-ignore
+            const feature = sortedFeatures[f];
+            feature.offSet = offSet;
+            offSet += feature.end - feature.start + 1 + intronBases;
 
-    return { featureTypes, featureIds: Object.keys(sortedFeatures), features: sortedFeatures }
+            offSetLookup[feature.featureId] = feature.offSet;
+        }
+    })
+    totalBasesToRender = offSet - intronBases;
+    console.log(offSetLookup);
+    console.log(sortedFeatures)
+
+    Object.keys(sortedFeatures).map((f) => {
+        //@ts-ignore
+        if (sortedFeatures[f].featureType === 'junction') {
+            //@ts-ignore
+            const feature = sortedFeatures[f];
+            //@ts-ignore
+            feature.offSet = offSetLookup[feature.previousExon] + sortedFeatures[feature.previousExon].len;
+            const offSetForEnd = offSetLookup[feature.nextExon] - 1;
+            feature.renderLen = offSetForEnd - feature.offSet + 1;
+        }
+    })
+
+    return { featureTypes, featureIds: Object.keys(sortedFeatures), features: sortedFeatures, totalBasesToRender }
 }

@@ -56,12 +56,12 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                     <TooltipInPortal top={model.uiState.currentY} left={model.uiState.currentX} style={tooltipStyles}>
                         <div>CurrentPanel: {model.uiState.currentPanel}</div>
                         {
-                            model.uiState.currentPanel !== 'feature' && (
+                            model.uiState.currentPanel !== 'feature' && model.features.currentFeatureId && model.subjects.currentSubjectId && (
                                 <>
                                     <div>CurrentX: {model.uiState.currentX}</div>
                                     <div>CurrentY: {model.uiState.currentY}</div>
                                     <div>Sample: {model.subjects.currentSubjectId}</div>
-                                    <div>Value: </div>
+                                    <div>Value: {model.observations.junction.subjects[model.subjects.currentSubjectId].features[model.features.currentFeatureId]}</div>
                                 </>
                             )
                         }

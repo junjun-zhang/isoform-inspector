@@ -2,61 +2,13 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { localPoint } from '@visx/event';
 
-const transcripts = {
-    "ENST00000426820.6": {
-        transcript_id: "ENST00000426820.6",
-        number_of_exons: 5,
-        total_exon_length: 1750,
-        "exons": [
-            {
-                exon_id: "ENSE00002224072.1",
-                chromosome: "2",
-                start: 54092711,
-                end: 54093221,
-                x: 0,
-                length: 341,
-            },
-            {
-                exon_id: "ENSE00002224072.2",
-                chromosome: "2",
-                start: 54093361,
-                end: 54093883,
-                x: 341,
-                length: 1078,
-            },
-            {
-                exon_id: "ENSE00002224072.3",
-                chromosome: "2",
-                start: 54094018,
-                end: 54096512,
-                x: 1419,
-                length: 124,
-            },
-            {
-                exon_id: "ENSE00002224072.4",
-                chromosome: "2",
-                start: 54094018,
-                end: 54101475,
-                x: 1543,
-                length: 120,
-            },
-            {
-                exon_id: "ENSE00002224072.5",
-                chromosome: "2",
-                start: 54096676,
-                end: 54101475,
-                x: 1663,
-                length: 102,
-            }
-        ]
-    }
-}
 
 export const GeneModel = ({ model, width, height }: { model: any, width: number, height: number }) => {
     if (model.dataState !== 'loaded') {
         return null
     }
 
+    console.log(model.transcripts);
     return (
         <>
             {
@@ -67,10 +19,10 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
                             <rect
                                 key={c.featureId}
                                 //@ts-ignore
-                                width={(c.featureType === 'exon' ? (c.end - c.start + 1) : 50) * t.pixelsPerBase}
+                                width={c.renderLen * t.pixelsPerBase * 0.95}
                                 height={c.featureType === 'exon' ? model.configure.featureHeight * 0.7 : 3}
                                 //@ts-ignore
-                                x={c.offSet * t.pixelsPerBase}
+                                x={c.offSet * t.pixelsPerBase * 0.95}
                                 y={i * model.configure.featureHeight + 20 + (c.featureType === 'junction' ? 6 : 0)}
                                 stroke={model.features.currentFeatureId === `${c.featureId}` ? "red" : "black"}
                                 fill={model.features.currentFeatureId === `${c.featureId}` ? "red" : "#ddd"}

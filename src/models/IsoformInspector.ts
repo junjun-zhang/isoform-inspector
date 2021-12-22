@@ -197,27 +197,19 @@ export default function IsoformInspector() {
                 transcriptFeatures.map((transcript) => {
                     let transcriptLength = 0;
                     let exonCount = 0;
-                    let offSet = 0;
                     const f = exonOrJunectionFeatures.filter((f) => f.parentFeatureId.includes(transcript.featureId));
-                    let updatedFeatures = []
-                    for (let c of f) {
-                        let newC = {...c};
+                    for (const c of f) {
                         if (c.featureType === 'exon') {
-                            newC.offSet = offSet;
                             transcriptLength += c.end - c.start + 1;
-                            offSet += c.end - c.start + 1;
                             exonCount++;
-                        } else if (c.featureType === 'junction') {
-                            newC.offSet = offSet;
-                            offSet += 50;  // set intron/junction to 50 bases
                         }
-                        updatedFeatures.push(newC)
                     }
                     transcripts[transcript.featureId] = {
                         transcriptLength,
                         exonCount,
-                        pixelsPerBase: this.heatmapWidth / offSet * 0.97,
-                        exonAndJunctions: updatedFeatures
+                        //@ts-ignore
+                        pixelsPerBase: this.heatmapWidth / self.features.totalBasesToRender,
+                        exonAndJunctions: f
                     }
                 });
                 return transcripts;
