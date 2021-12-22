@@ -60,7 +60,11 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                                     <div>CurrentX: {model.uiState.currentX}</div>
                                     <div>CurrentY: {model.uiState.currentY}</div>
                                     <div>Sample: {model.subjects.currentSubjectId}</div>
-                                    <div>Value: {model.observations.junction.subjects[model.subjects.currentSubjectId].features[model.features.currentFeatureId]}</div>
+                                    <div>Value: {
+                                        (model.features.currentFeatureId && model.subjects.currentSubjectId)
+                                            ? model.observations.junction.subjects[model.subjects.currentSubjectId].features[model.features.currentFeatureId]
+                                            : ""
+                                    }</div>
                                 </>
                             )
                         }
