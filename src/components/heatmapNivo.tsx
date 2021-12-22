@@ -15,6 +15,7 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
     }
 
     const pixelsPerFeature = width / model.heatmapFeatureIds.length;
+    const pixelsPerSubject = height / model.subjects.subjectIds.length;
 
     function featureIdToX(featureIdIdx: number | undefined): number | undefined {
         if (featureIdIdx !== undefined && featureIdIdx >= 0) {
@@ -66,9 +67,8 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                     model.setCurrentPanel('heatmap');
                     model.setCurrentX(eventSvgCoords?.x)
                     model.setCurrentY(eventSvgCoords?.y)
-                    model.subjects.setCurrentSubjectId('SA000099');
                     if (model.uiState.currentY) {
-                        const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / 3.59);  // 3.59 pixels per row
+                        const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / pixelsPerSubject);
                         if (subjectIdIdx < model.subjects.subjectIds.length) {
                             model.subjects.setCurrentSubjectId(model.subjects.subjectIds[subjectIdIdx]);
                         } else {

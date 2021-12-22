@@ -30,7 +30,6 @@ const IsoformInspector = observer(({model}: {model: any}) => {
         color: 'white',
     };
 
-    console.log(model)
     return (
         <div>
             <h3>Transcript Isoform Inspector</h3>
@@ -46,7 +45,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                         {/* main heatmap panel */}
                         <HeatmapN model={model} width={model.heatmapWidth - margin.left - separation} height={heatmapHeight} />
                     </Group>
-                    <Group top={heatmapHeight + 60} left={margin.left + width * 0.1 + separation}>
+                    <Group top={heatmapHeight + 30} left={margin.left + width * 0.1 + separation}>
                         {/* gene / transcript panel */}
                         {model.dataState === 'loaded' && <text>Transcript Isoforms</text>}
                         <GeneModel model={model} width={model.heatmapWidth} height={model.featurePanelHeight} />
@@ -56,7 +55,7 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                     <TooltipInPortal top={model.uiState.currentY} left={model.uiState.currentX} style={tooltipStyles}>
                         <div>CurrentPanel: {model.uiState.currentPanel}</div>
                         {
-                            model.uiState.currentPanel !== 'feature' && model.features.currentFeatureId && model.subjects.currentSubjectId && (
+                            model.uiState.currentPanel !== 'feature' && (model.features.currentFeatureId || model.subjects.currentSubjectId) && (
                                 <>
                                     <div>CurrentX: {model.uiState.currentX}</div>
                                     <div>CurrentY: {model.uiState.currentY}</div>

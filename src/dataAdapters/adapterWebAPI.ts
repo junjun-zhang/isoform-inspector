@@ -160,7 +160,7 @@ export async function fetchFeatures(
         featureId: mainFeatureId,
         featureType: 'gene',
         name: mainFeature.name,
-        parentFeatureId: [],
+        parentFeatureIds: [],
         strand: mainFeature.strand,
         chr: mainFeature.chr,
         start: mainFeature.start,
@@ -173,7 +173,7 @@ export async function fetchFeatures(
             featureId: transcript.id,
             featureType: 'transcript',
             name: transcript.name,
-            parentFeatureId: [mainFeatureId],
+            parentFeatureIds: [mainFeatureId],
             strand: transcript.strand,
             chr: transcript.chr,
             start: transcript.start,
@@ -195,21 +195,23 @@ export async function fetchFeatures(
                     features[junctionsId] = {
                         featureType: 'junction',
                         featureId: junctionsId,
-                        parentFeatureId: [transcript.id],
+                        parentFeatureIds: [transcript.id],
                         strand: exon.strand,
                         chr: exon.chr,
                         start: junction_start,
                         end: junction_end,
-                        offSet: 0,
                         //@ts-ignore
                         len: junction_end - junction_start + 1,
-                        renderLen: 0,  // to be set later
-                        previousExon: previousExonId,
-                        nextExon: featureId
+                        offSet: {},  // to be set later
+                        renderLen: {},  // to be set later
+                        previousExon: {},  // make it contexture to transcriptId
+                        nextExon: {}  // make it contexture to transcriptId
                     };
                 } else {
-                    features[junctionsId].parentFeatureId.push(transcript.id);
+                    features[junctionsId].parentFeatureIds.push(transcript.id);
                 }
+                features[junctionsId].previousExon[transcript.id] = previousExonId;
+                features[junctionsId].nextExon[transcript.id] = featureId;
             }
             if (exon.strand === '+') junction_start = exon.end + 1;
             if (exon.strand === '-') junction_end = exon.start - 1;
@@ -221,7 +223,7 @@ export async function fetchFeatures(
                     featureType: 'exon',
                     id: exon.id,
                     featureId: featureId,
-                    parentFeatureId: [transcript.id],
+                    parentFeatureIds: [transcript.id],
                     strand: exon.strand,
                     chr: exon.chr,
                     start: exon.start,
@@ -231,7 +233,7 @@ export async function fetchFeatures(
                     renderLen: exon.end - exon.start + 1
                 };
             } else {
-                features[featureId].parentFeatureId.push(transcript.id);
+                features[featureId].parentFeatureIds.push(transcript.id);
             }
         }
     }
@@ -274,18 +276,20 @@ export async function fetchFeatures(
         }
     })
     totalBasesToRender = offSet - intronBases;
-    console.log(offSetLookup);
-    console.log(sortedFeatures)
 
     Object.keys(sortedFeatures).map((f) => {
         //@ts-ignore
         if (sortedFeatures[f].featureType === 'junction') {
             //@ts-ignore
             const feature = sortedFeatures[f];
-            //@ts-ignore
-            feature.offSet = offSetLookup[feature.previousExon] + sortedFeatures[feature.previousExon].len;
-            const offSetForEnd = offSetLookup[feature.nextExon] - 1;
-            feature.renderLen = offSetForEnd - feature.offSet + 1;
+            for (const transcriptId of feature.parentFeatureIds) {
+                const previousExon = feature.previousExon[transcriptId];
+                const nextExon = feature.nextExon[transcriptId];
+                //@ts-ignore
+                feature.offSet[transcriptId] = offSetLookup[previousExon] + sortedFeatures[previousExon].len;
+                const offSetForEnd = offSetLookup[nextExon] - 1;
+                feature.renderLen[transcriptId] = offSetForEnd - feature.offSet[transcriptId] + 1;
+            }
         }
     })
 

@@ -8,7 +8,6 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
         return null
     }
 
-    console.log(model.transcripts);
     return (
         <>
             {
@@ -19,10 +18,10 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
                             <rect
                                 key={c.featureId}
                                 //@ts-ignore
-                                width={c.renderLen * t.pixelsPerBase * 0.95}
+                                width={(c.featureType === 'exon' ? c.renderLen : c.renderLen[k]) * t.pixelsPerBase * 0.95}
                                 height={c.featureType === 'exon' ? model.configure.featureHeight * 0.7 : 3}
                                 //@ts-ignore
-                                x={c.offSet * t.pixelsPerBase * 0.95}
+                                x={(c.featureType === 'exon' ? c.offSet : c.offSet[k]) * t.pixelsPerBase * 0.95}
                                 y={i * model.configure.featureHeight + 20 + (c.featureType === 'junction' ? 6 : 0)}
                                 stroke={model.features.currentFeatureId === `${c.featureId}` ? "red" : "black"}
                                 fill={model.features.currentFeatureId === `${c.featureId}` ? "red" : "#ddd"}

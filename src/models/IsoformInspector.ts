@@ -197,7 +197,7 @@ export default function IsoformInspector() {
                 transcriptFeatures.map((transcript) => {
                     let transcriptLength = 0;
                     let exonCount = 0;
-                    const f = exonOrJunectionFeatures.filter((f) => f.parentFeatureId.includes(transcript.featureId));
+                    const f = exonOrJunectionFeatures.filter((f) => f.parentFeatureIds.includes(transcript.featureId));
                     for (const c of f) {
                         if (c.featureType === 'exon') {
                             transcriptLength += c.end - c.start + 1;
