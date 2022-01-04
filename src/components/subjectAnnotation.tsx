@@ -13,6 +13,8 @@ export const SubjectAnnotation = ({ model, width, height }: { model: any, width:
         return null
     }
 
+    const pixelsPerSubject = height / model.subjects.subjectIds.length;
+
     return (
         <>
         <foreignObject x={0} y={0} width={width} height={height}>
@@ -48,7 +50,7 @@ export const SubjectAnnotation = ({ model, width, height }: { model: any, width:
                 model.setCurrentX(eventSvgCoords?.x)
                 model.setCurrentY(eventSvgCoords?.y)
                 if (model.uiState.currentY) {
-                    const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / 3.59);  // 3.59 pixels per row
+                    const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / pixelsPerSubject);
                     if (subjectIdIdx < model.subjects.subjectIds.length) {
                         model.subjects.setCurrentSubjectId(model.subjects.subjectIds[subjectIdIdx]);
                     } else {

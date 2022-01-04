@@ -6,12 +6,7 @@ import { Line } from '@visx/shape';
 
 export const accentColorDark = '#75daad';
 
-function featureIdToX(featureIdIdx: number | undefined): number | undefined {
-    if (featureIdIdx !== undefined && featureIdIdx >= 0) {
-        return featureIdIdx * 20 + 12
-    }
-    return undefined
-}
+
 
 
 export const HeatmapN = ({ model, width, height }: { model: any, width: number, height: number }) => {
@@ -19,12 +14,22 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
         return null
     }
 
+    const pixelsPerFeature = width / model.heatmapFeatureIds.length;
+    const pixelsPerSubject = height / model.subjects.subjectIds.length;
+
+    function featureIdToX(featureIdIdx: number | undefined): number | undefined {
+        if (featureIdIdx !== undefined && featureIdIdx >= 0) {
+            return (featureIdIdx + 0.5) * pixelsPerFeature;
+        }
+        return undefined;
+    }
+
     return (
         <>
             <foreignObject x={0} y={0} width={width} height={height}>
                 <HeatMapCanvas
                     indexBy={model.configure.subject.subjectType}
-                    keys={model.features.featureIds}
+                    keys={model.heatmapFeatureIds}
                     data={model.nivoData}
                     width={width}
                     height={height}
@@ -62,9 +67,8 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                     model.setCurrentPanel('heatmap');
                     model.setCurrentX(eventSvgCoords?.x)
                     model.setCurrentY(eventSvgCoords?.y)
-                    model.subjects.setCurrentSubjectId('SA000099');
                     if (model.uiState.currentY) {
-                        const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / 3.59);  // 3.59 pixels per row
+                        const subjectIdIdx = Math.floor((model.uiState.currentY - 2) / pixelsPerSubject);
                         if (subjectIdIdx < model.subjects.subjectIds.length) {
                             model.subjects.setCurrentSubjectId(model.subjects.subjectIds[subjectIdIdx]);
                         } else {
@@ -75,9 +79,9 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                     }
 
                     if (model.uiState.currentX) {
-                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / 20.1);  // 20.1 pixels per column
-                        if (featureIdIdx < model.features.featureIds.length) {
-                            model.features.setCurrentFeatureId(model.features.featureIds[featureIdIdx]);
+                        const featureIdIdx = Math.floor((model.uiState.currentX - 146) / pixelsPerFeature);
+                        if (featureIdIdx < model.heatmapFeatureIds.length) {
+                            model.features.setCurrentFeatureId(model.heatmapFeatureIds[featureIdIdx]);
                         } else {
                             model.features.setCurrentFeatureId(undefined);
                         }
@@ -101,11 +105,11 @@ export const HeatmapN = ({ model, width, height }: { model: any, width: number, 
                 )
             }
             {
-                model.features?.currentFeatureId && (
+                model.features?.currentFeatureId && model.heatmapFeatureIds.includes(model.features.currentFeatureId) && (
                     <g>
                         <Line
-                            from={{ x: featureIdToX(model.features.featureIds.indexOf(model.features.currentFeatureId)), y: 0 }}
-                            to={{ x: featureIdToX(model.features.featureIds.indexOf(model.features.currentFeatureId)), y: height }}
+                            from={{ x: featureIdToX(model.heatmapFeatureIds.indexOf(model.features.currentFeatureId)), y: 0 }}
+                            to={{ x: featureIdToX(model.heatmapFeatureIds.indexOf(model.features.currentFeatureId)), y: height }}
                             stroke={accentColorDark}
                             strokeWidth={2}
                             pointerEvents="none"
