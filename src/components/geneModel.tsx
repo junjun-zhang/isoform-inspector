@@ -45,37 +45,6 @@ export const GeneModel = ({ model, width, height }: { model: any, width: number,
                     )
                 )
             }
-            {/* {
-                <rect key={`transcript-1`} width={width} height={2} x={0} y={30} />
-            }
-            {
-                transcripts["ENST00000426820.6"].exons.map(
-                    (exon) => <rect
-                        key={`${exon.chromosome}:${exon.start}-${exon.end}`}
-                        width={exon.length / 3}
-                        height={20}
-                        x={exon.x / 1.63}
-                        y={20}
-                        stroke={model.features.currentFeatureId === `${exon.chromosome}:${exon.start}-${exon.end}` ? "red" : "black"}
-                        fill={model.features.currentFeatureId === `${exon.chromosome}:${exon.start}-${exon.end}` ? "red" : "#ddd"}
-                        onMouseLeave={() => {
-                            model.setCurrentPanel(undefined);
-                            model.setCurrentX(undefined)
-                            model.setCurrentY(undefined)
-                            model.subjects.setCurrentSubjectId(undefined);
-                            model.features.setCurrentFeatureId(undefined);
-                        }}
-                        onMouseMove={(event) => {
-                            const eventSvgCoords = localPoint(event);
-                            model.setCurrentPanel('feature');
-                            model.setCurrentX(eventSvgCoords?.x)
-                            model.setCurrentY(eventSvgCoords?.y)
-                            model.subjects.setCurrentSubjectId(undefined);
-                            model.features.setCurrentFeatureId(`${exon.chromosome}:${exon.start}-${exon.end}`);
-                        }}
-                    />
-                )
-            } */}
         </>
     );
 };
