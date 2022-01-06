@@ -6,9 +6,8 @@ import { fetchSubjects, fetchFeatures, fetchObservations } from '../dataAdapters
 import { getNivoData, getVisxData, getSubjAnnoData, orderSubjectByAnnotation } from '../dataAdapters/utils'
 import Subject from "./subject";
 import Configure from "./configure";
-import { clusterData } from '@greenelab/hclust';
+// import { clusterData } from '@greenelab/hclust';
 import { agnes } from 'ml-hclust'
-import { features } from "process";
 
 
 function inOrderTraverse(currentNode: {[key: string]: any} | null, leafNodes: number[]) {
@@ -157,7 +156,7 @@ export default function IsoformInspector() {
             get heatmapFeatureIds() {
                 let featureIds: string[] = [];
                 //@ts-ignore
-                [...self.features.features.values()].map((feature) => {
+                [...self.features.features.values()].forEach((feature) => {
                     if (feature.featureType === self.configure.feature.featureType) {
                         featureIds.push(feature.featureId);
                     }
@@ -194,7 +193,7 @@ export default function IsoformInspector() {
                 let exonOrJunectionFeatures = features.filter(feature => ['exon', 'junction'].includes(feature.featureType));
 
                 //@ts-ignore
-                transcriptFeatures.map((transcript) => {
+                transcriptFeatures.forEach((transcript) => {
                     let transcriptLength = 0;
                     let exonCount = 0;
                     const f = exonOrJunectionFeatures.filter((f) => f.parentFeatureIds.includes(transcript.featureId));

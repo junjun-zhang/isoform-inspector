@@ -1,12 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { HeatMapCanvas, HeatMap } from '@nivo/heatmap';
+import { HeatMapCanvas, HeatMap } from '@nivo/heatmap';  // HeatMap is SVG based, may be switched to use when user downloads the chart
 import { localPoint } from '@visx/event';
 import { Line } from '@visx/shape';
 
 export const accentColorDark = '#75daad';
-
-
 
 
 export const HeatmapN = ({ model, width, height }: { model: any, width: number, height: number }) => {

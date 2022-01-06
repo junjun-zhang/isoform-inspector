@@ -10,16 +10,12 @@ import { GeneModel } from "./components/geneModel";
 
 
 const IsoformInspector = observer(({model}: {model: any}) => {
-    console.log(model);
+    // console.log(model);
 
     const width = model.configure.width;
     const heatmapHeight = model.configure.heatmapHeight;
-    // const events = false;
     const margin = { top: 20, left: 20, right: 20, bottom: 20 };
     const separation = 5
-
-    // const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
-    //     useTooltip();
 
     const { containerRef, TooltipInPortal } = useTooltipInPortal({
         scroll: true,

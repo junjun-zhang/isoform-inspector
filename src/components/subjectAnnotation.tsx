@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from "mobx-react-lite";
-import { Bar, BarCanvas } from '@nivo/bar';
+import { Bar, BarCanvas } from '@nivo/bar';   // Bar is SVG based, may be switched to use when user downloads the chart
 import { Line } from '@visx/shape';
 import { localPoint } from '@visx/event';
 

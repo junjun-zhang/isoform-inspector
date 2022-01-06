@@ -264,7 +264,7 @@ export async function fetchFeatures(
     let offSet = 0;
     let offSetLookup: {[key: string]: number} = {};
     const intronBases = 50;  // 50 bases for rendering an intron
-    Object.keys(sortedFeatures).map((f) => {
+    Object.keys(sortedFeatures).forEach((f) => {
         //@ts-ignore
         if (sortedFeatures[f].featureType === 'exon') {
             //@ts-ignore
@@ -277,7 +277,7 @@ export async function fetchFeatures(
     })
     totalBasesToRender = offSet - intronBases;
 
-    Object.keys(sortedFeatures).map((f) => {
+    Object.keys(sortedFeatures).forEach((f) => {
         //@ts-ignore
         if (sortedFeatures[f].featureType === 'junction') {
             //@ts-ignore
