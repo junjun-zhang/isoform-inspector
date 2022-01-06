@@ -10,6 +10,8 @@ import { GeneModel } from "./components/geneModel";
 
 
 const IsoformInspector = observer(({model}: {model: any}) => {
+    console.log(model);
+
     const width = model.configure.width;
     const heatmapHeight = model.configure.heatmapHeight;
     // const events = false;
@@ -61,8 +63,12 @@ const IsoformInspector = observer(({model}: {model: any}) => {
                                     <div>CurrentY: {model.uiState.currentY}</div>
                                     <div>Sample: {model.subjects.currentSubjectId}</div>
                                     <div>Value: {
-                                        (model.features.currentFeatureId && model.subjects.currentSubjectId)
-                                            ? model.observations.junction.subjects[model.subjects.currentSubjectId].features[model.features.currentFeatureId]
+                                        model.subjects.currentSubjectId
+                                            ? (model.features.currentFeatureId
+                                                ? model.observations.junction.subjects[model.subjects.currentSubjectId].features[model.features.currentFeatureId]
+                                                : "project: " + model.subjects.subjects.get(model.subjects.currentSubjectId).project +
+                                                  "; specimen_type: " + model.subjects.subjects.get(model.subjects.currentSubjectId).specimen_type
+                                              )
                                             : ""
                                     }</div>
                                 </>
